@@ -74,7 +74,7 @@ public sealed class TldrPromptBuilderTests
         // exactly, so the total must NOT be treated as over budget.
         ChannelMessage message = MessageWithRenderedLineLength("A", 'x', TldrPromptBuilder.MaxPromptCharacters - 1, DateTimeOffset.UtcNow);
 
-        string prompt = TldrPromptBuilder.Build(new List<ChannelMessage> { message });
+        string prompt = TldrPromptBuilder.Build([message]);
 
         Assert.That(prompt, Does.Contain(message.Content));
     }
