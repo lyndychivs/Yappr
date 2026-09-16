@@ -1,0 +1,51 @@
+name: Release
+run-name: "Release: ${{ github.event.release.tag_name }}"
+permissions:
+    contents: read
+    packages: write
+on:
+    release:
+        types: [published]
+jobs:
+    get_version:
+        name: "[Release] Get Version"
+        uses: ./.github/workflows/get_version.yaml
+
+    build_test:
+        name: "[Release] Build & Test"
+        uses: ./.github/workflows/build_test.yaml
+
+    build_and_push_image:
+        name: Build & Push Docker Image
+        needs: [get_version, build_test]
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        permissions:
+            contents: read
+            packages: write
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+
+            - name: Log in to GitHub Container Registry
+              uses: docker/login-action@v4
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Build & Push Yappr.Discord Image
+              uses: docker/build-push-action@v6
+              with:
+                  context: .
+                  file: src/Yappr.Discord/Dockerfile
+                  push: true
+                  tags: |
+                      ghcr.io/${{ github.repository_owner }}/yappr-discord:${{ needs.get_version.outputs.version }}
+                      ghcr.io/${{ github.repository_owner }}/yappr-discord:latest
+
+    deploy:
+        name: "[Release] Deploy"
+        needs: [build_and_push_image]
+        uses: ./.github/workflows/deploy.yaml
+        secrets: inherit

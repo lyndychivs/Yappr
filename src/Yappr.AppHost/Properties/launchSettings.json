@@ -1,0 +1,10 @@
+{
+    "profiles": {
+        "Yappr.AppHost": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
+        }
+    }
+}

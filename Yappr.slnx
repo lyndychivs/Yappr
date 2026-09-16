@@ -1,0 +1,70 @@
+<Solution>
+    <Configurations>
+        <BuildType Name="Debug" />
+        <BuildType Name="Release" />
+        <BuildType Name="Stryker" />
+    </Configurations>
+    <Folder Name="/.aspire/">
+        <File Path=".aspire/settings.json" />
+    </Folder>
+    <Folder Name="/.github/">
+        <File Path=".github/dependabot.yaml" />
+        <File Path=".github/PULL_REQUEST_TEMPLATE.md" />
+    </Folder>
+    <Folder Name="/.github/ISSUE_TEMPLATE/">
+        <File Path=".github/ISSUE_TEMPLATE/bug_report.md" />
+        <File Path=".github/ISSUE_TEMPLATE/feature_request.md" />
+    </Folder>
+    <Folder Name="/.github/workflows/">
+        <File Path=".github/workflows/build_test.yaml" />
+        <File Path=".github/workflows/deploy.yaml" />
+        <File Path=".github/workflows/dotnet_stryker_action.yaml" />
+        <File Path=".github/workflows/get_version.yaml" />
+        <File Path=".github/workflows/release.yaml" />
+    </Folder>
+    <Folder Name="/deploy/">
+        <File Path="deploy/docker-compose.yaml" />
+        <File Path="deploy/docker-compose.production.yml" />
+    </Folder>
+    <Folder Name="/Solution Items/">
+        <File Path=".dockerignore" />
+        <File Path=".editorconfig" />
+        <File Path=".env.template" />
+        <File Path=".gitignore" />
+        <File Path="CODE_OF_CONDUCT.md" />
+        <File Path="CONTRIBUTING.md" />
+        <File Path="Directory.Build.props" />
+        <File Path="Directory.Build.targets" />
+        <File Path="Directory.Packages.props" />
+        <File Path="global.json" />
+        <File Path="dotnet-tools.json" />
+        <File Path="LICENSE" />
+        <File Path="Makefile" />
+        <File Path="README.md" />
+        <File Path="SECURITY.md" />
+    </Folder>
+    <Folder Name="/tests/">
+        <File Path="tests/.runsettings" />
+    </Folder>
+    <Project Path="src/Yappr.AppHost/Yappr.AppHost.csproj">
+        <Build Solution="Stryker|*" Project="false" />
+    </Project>
+    <Project Path="tests/unit/Yappr.Discord.Unit.Tests/Yappr.Discord.Unit.Tests.csproj">
+        <Build Solution="Stryker|*" Project="false" />
+    </Project>
+    <Project Path="src/Yappr.Discord/Yappr.Discord.csproj">
+        <Build Solution="Stryker|*" Project="false" />
+    </Project>
+    <Project Path="tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj">
+        <Build Solution="Stryker|*" Project="false" />
+    </Project>
+    <Project Path="tests/integration/Yappr.McpTestServer/Yappr.McpTestServer.csproj">
+        <Build Solution="Stryker|*" Project="false" />
+    </Project>
+    <Project Path="src/Yappr.Models/Yappr.Models.csproj" />
+    <Project Path="src/Yappr.ServiceDefaults/Yappr.ServiceDefaults.csproj">
+        <Build Solution="Stryker|*" Project="false" />
+    </Project>
+    <Project Path="tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj" />
+    <Project Path="src/Yappr/Yappr.csproj" />
+</Solution>

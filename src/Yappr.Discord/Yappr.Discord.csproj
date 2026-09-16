@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+    <ItemGroup>
+        <PackageReference Include="NetCord.Hosting.Services" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Yappr\Yappr.csproj" />
+        <ProjectReference Include="..\Yappr.Models\Yappr.Models.csproj" />
+        <ProjectReference Include="..\Yappr.ServiceDefaults\Yappr.ServiceDefaults.csproj" />
+    </ItemGroup>
+</Project>

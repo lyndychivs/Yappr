@@ -1,0 +1,79 @@
+name: Build & Test
+run-name: Build & Test
+permissions:
+    contents: read
+on:
+    push:
+    workflow_dispatch:
+    schedule:
+        - cron: "0 4 * * SUN"
+    workflow_call:
+jobs:
+    get_version:
+        name: "[Build & Test] Get Version"
+        uses: ./.github/workflows/get_version.yaml
+
+    build_test:
+        name: Build & Test
+        needs: [get_version]
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        env:
+            CONFIGURATION: Release
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+
+            - name: Install .NET
+              uses: actions/setup-dotnet@v6
+              with:
+                  global-json-file: global.json
+
+            - name: Restore
+              run: dotnet restore
+
+            - name: Build
+              id: build
+              run: dotnet build --no-restore --configuration ${{ env.CONFIGURATION }} /p:Version=${{ needs.get_version.outputs.version }}
+
+            - name: Test Yappr.Unit.Tests
+              if: steps.build.outcome == 'success'
+              run: dotnet test --project tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj --no-build --configuration ${{ env.CONFIGURATION }} -- --report-trx --report-trx-filename Yappr.Unit.Tests.trx
+
+            - name: Test Yappr.Discord.Unit.Tests
+              if: steps.build.outcome == 'success'
+              run: dotnet test --project tests/unit/Yappr.Discord.Unit.Tests/Yappr.Discord.Unit.Tests.csproj --no-build --configuration ${{ env.CONFIGURATION }} -- --report-trx --report-trx-filename Yappr.Discord.Unit.Tests.trx
+
+            - name: Test Yappr.Integration.Tests
+              if: steps.build.outcome == 'success'
+              run: dotnet test --project tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj --no-build --configuration ${{ env.CONFIGURATION }} -- --report-trx --report-trx-filename Yappr.Integration.Tests.trx
+
+            - name: Upload Test Results
+              uses: actions/upload-artifact@v7
+              if: (!cancelled() && steps.build.outcome == 'success')
+              with:
+                  name: test-results
+                  retention-days: 7
+                  if-no-files-found: error
+                  path: "**/*.trx"
+
+    publish_results:
+        name: Publish Results
+        needs: [build_test]
+        if: ${{ !cancelled() }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        permissions:
+            actions: read
+            checks: write
+        steps:
+            - uses: dorny/test-reporter@v3
+              with:
+                name: Publish Test Results
+                artifact: test-results
+                path: '**/*.trx'
+                reporter: dotnet-trx
+                report-title: Yappr Test Results
+                fail-on-error: true
+                fail-on-empty: true
+                use-actions-summary: true

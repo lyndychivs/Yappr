@@ -1,0 +1,10 @@
+{
+    "profiles": {
+        "Yappr.Discord": {
+            "commandName": "Project",
+            "environmentVariables": {
+                "DOTNET_ENVIRONMENT": "Development"
+            }
+        }
+    }
+}

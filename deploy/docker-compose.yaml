@@ -1,0 +1,52 @@
+services:
+    yappr-dashboard:
+        image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
+        environment:
+            ASPIRE_DASHBOARD_FORWARDEDHEADERS_ENABLED: "true"
+            DASHBOARD__OTLP__AUTHMODE: "ApiKey"
+            DASHBOARD__OTLP__PRIMARYAPIKEY: "${DASHBOARD_OTLP_API_KEY}"
+            DASHBOARD__FRONTEND__AUTHMODE: "${DASHBOARD_FRONTEND_AUTHMODE}"
+            DASHBOARD__FRONTEND__BROWSERTOKEN: "${DASHBOARD_FRONTEND_BROWSERTOKEN}"
+        ports:
+            - "${ASPIRE_API_PORT}:${ASPIRE_API_PORT}"
+        expose:
+            - "${ASPIRE_OTLP_PORT}"
+        networks:
+            - "aspire"
+        restart: "always"
+    yappr-discord:
+        image: "yappr-discord:latest"
+        build:
+            context: ".."
+            dockerfile: "src/Yappr.Discord/Dockerfile"
+        environment:
+            OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+            OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+            OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+            OTEL_EXPORTER_OTLP_ENDPOINT: "http://yappr-dashboard:${ASPIRE_OTLP_PORT}"
+            OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+            OTEL_SERVICE_NAME: "yappr-discord"
+            OTEL_EXPORTER_OTLP_HEADERS: "x-otlp-api-key=${DASHBOARD_OTLP_API_KEY}"
+            DOTNET_ENVIRONMENT: "Production"
+            Discord__Token: "${DISCORD_TOKEN}"
+            Discord__PublicKey: "${DISCORD_PUBLIC_KEY}"
+            Mcp__Transport: "${MCP_TRANSPORT}"
+            Mcp__Command: "${MCP_COMMAND}"
+            Mcp__HttpEndpoint: "${MCP_HTTP_ENDPOINT}"
+            Mcp__ToolName: "${MCP_TOOL_NAME}"
+            TldrLimits__MaxDays: "${TLDR_MAX_DAYS}"
+            TldrLimits__MaxHours: "${TLDR_MAX_HOURS}"
+            TldrLimits__MaxMessages: "${TLDR_MAX_MESSAGES}"
+        volumes:
+            - discord-dataprotection:/root/.aspnet/DataProtection-Keys
+        depends_on:
+            yappr-dashboard:
+                condition: "service_started"
+        networks:
+            - "aspire"
+        restart: "unless-stopped"
+networks:
+    aspire:
+        driver: "bridge"
+volumes:
+    discord-dataprotection:

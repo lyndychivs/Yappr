@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsTestProject>true</IsTestProject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NUnit" />
+        <PackageReference Include="Moq" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\..\src\Yappr\Yappr.csproj" />
+        <ProjectReference Include="..\..\..\src\Yappr.Models\Yappr.Models.csproj" />
+    </ItemGroup>
+</Project>

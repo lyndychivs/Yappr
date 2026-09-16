@@ -1,0 +1,15 @@
+<Project Sdk="Aspire.AppHost.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>7d8b7a2e-2f3f-4b0e-9f9a-8e7b6c5d4a3f</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Yappr.Discord\Yappr.Discord.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.Docker" />
+    </ItemGroup>
+</Project>

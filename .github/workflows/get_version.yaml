@@ -1,0 +1,29 @@
+name: Get Version
+on:
+    workflow_dispatch:
+    workflow_call:
+        outputs:
+            version:
+                description: 'The resolved version'
+                value: ${{ jobs.get_version.outputs.version }}
+permissions:
+    contents: read
+jobs:
+    get_version:
+        name: Calculate Version
+        runs-on: ubuntu-latest
+        outputs:
+            version: ${{ steps.get_version.outputs.version }}
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Get Version
+              id: get_version
+              run: |
+                  TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+                  VERSION=${TAG#v}
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+                  echo "Building version: $VERSION"

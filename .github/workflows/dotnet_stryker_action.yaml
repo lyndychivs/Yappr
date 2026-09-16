@@ -1,0 +1,25 @@
+name: Mutation Testing with Stryker.NET
+run-name: Mutation Testing with Stryker.NET
+permissions:
+    contents: read
+on:
+    push:
+    workflow_dispatch:
+    schedule:
+        - cron: "0 4 * * SUN"
+jobs:
+    mutation_testing:
+        name: Mutation Testing
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v7
+
+            - name: Run Stryker.NET
+              uses: lyndychivs/dotnet-stryker-action@v2
+              env:
+                  STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD }}
+              with:
+                  configFile: "tests/unit/Yappr.Unit.Tests/stryker-config.json"
+                  strykerArgs: "--reporter progress --reporter html --reporter dashboard --reporter json"
