@@ -25,41 +25,38 @@ public sealed class McpClientToolInvoker(IOptions<McpOptions> options) : IMcpToo
 
     public async Task<string> InvokeAsync(string prompt, CancellationToken cancellationToken)
     {
-        IClientTransport transport = this.CreateTransport();
+        IClientTransport transport = CreateTransport();
 
         await using McpClient client = await McpClient.CreateAsync(transport, cancellationToken: cancellationToken);
 
         var arguments = new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = prompt };
 
         CallToolResult result = await client.CallToolAsync(
-            this.options.ToolName,
+            options.ToolName,
             arguments,
             cancellationToken: cancellationToken);
 
         TextContentBlock? textBlock = result.Content.OfType<TextContentBlock>().FirstOrDefault();
 
-        if (textBlock is null)
-        {
-            throw new InvalidOperationException($"The MCP tool '{this.options.ToolName}' did not return any text content.");
-        }
-
-        return textBlock.Text;
+        return textBlock is null
+            ? throw new InvalidOperationException($"The MCP tool '{options.ToolName}' did not return any text content.")
+            : textBlock.Text;
     }
 
-    private IClientTransport CreateTransport() => this.options.Transport switch
+    private IClientTransport CreateTransport() => options.Transport switch
     {
         McpTransportType.Stdio => new StdioClientTransport(new StdioClientTransportOptions
         {
             Name = "Yappr",
-            Command = this.options.Command ?? throw new InvalidOperationException("Mcp:Command must be configured for the Stdio transport."),
-            Arguments = this.options.Arguments,
+            Command = options.Command ?? throw new InvalidOperationException("Mcp:Command must be configured for the Stdio transport."),
+            Arguments = options.Arguments,
         }),
 
         McpTransportType.Http => new HttpClientTransport(new HttpClientTransportOptions
         {
-            Endpoint = new Uri(this.options.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
+            Endpoint = new Uri(options.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
         }),
 
-        _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{this.options.Transport}'."),
+        _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{options.Transport}'."),
     };
 }

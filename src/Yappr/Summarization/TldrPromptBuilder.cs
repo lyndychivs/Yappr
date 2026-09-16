@@ -1,6 +1,7 @@
 namespace Yappr.Summarization;
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 using Yappr.Models;
@@ -18,7 +19,7 @@ public static class TldrPromptBuilder
         var lines = new List<string>(messages.Count);
         foreach (ChannelMessage message in messages)
         {
-            lines.Add($"[{message.TimestampUtc:yyyy-MM-dd HH:mm} UTC] {message.AuthorDisplayName}: {message.Content}");
+            lines.Add(string.Create(CultureInfo.InvariantCulture, $"[{message.TimestampUtc:yyyy-MM-dd HH:mm} UTC] {message.AuthorDisplayName}: {message.Content}"));
         }
 
         string transcript = BuildWithinBudget(lines);
