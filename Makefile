@@ -32,16 +32,16 @@ mutate: ## Run Stryker Mutation Testing
 
 # Docker
 compose: ## Composes Yappr Docker images
-	docker compose --file $(COMPOSE_FILE) up --detach
+	docker compose --file $(COMPOSE_FILE) --env-file .env up --detach --build
 
 stop: ## Stops Yappr Docker images
-	docker compose --file $(COMPOSE_FILE) down
+	docker compose --file $(COMPOSE_FILE) --env-file .env down
 
 stop-volumes: ## Stops Yappr Docker images and removes volumes
-	docker compose --file $(COMPOSE_FILE) down --volumes
+	docker compose --file $(COMPOSE_FILE) --env-file .env down --volumes
 
 logs: ## Shows logs for Yappr Docker images
-	@docker compose --file $(COMPOSE_FILE) logs --follow
+	@docker compose --file $(COMPOSE_FILE) --env-file .env logs --follow
 
 restart: stop-volumes build-all compose ## Rebuild Yappr Docker images and restart Containers
 
