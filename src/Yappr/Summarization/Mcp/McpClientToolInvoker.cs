@@ -3,9 +3,11 @@ namespace Yappr.Summarization.Mcp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
 
 using ModelContextProtocol.Client;
@@ -19,8 +21,10 @@ using Yappr.Models;
 /// summarization tool. A new client connection is opened per call, which is simple and appropriate for the
 /// low request volume of a Discord slash command.
 /// </summary>
-public sealed class McpClientToolInvoker(IOptions<McpOptions> options) : IMcpToolInvoker
+public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, IOptions<McpOptions> options) : IMcpToolInvoker
 {
+    public const string HttpClientName = nameof(McpClientToolInvoker);
+
     private readonly McpOptions options = options.Value;
 
     public async Task<string> InvokeAsync(string prompt, CancellationToken cancellationToken)
@@ -52,10 +56,14 @@ public sealed class McpClientToolInvoker(IOptions<McpOptions> options) : IMcpToo
             Arguments = options.Arguments,
         }),
 
-        McpTransportType.Http => new HttpClientTransport(new HttpClientTransportOptions
-        {
-            Endpoint = new Uri(options.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
-        }),
+        McpTransportType.Http => new HttpClientTransport(
+            new HttpClientTransportOptions
+            {
+                Endpoint = new Uri(options.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
+            },
+            httpClientFactory.CreateClient(HttpClientName),
+            loggerFactory: null,
+            ownsHttpClient: true),
 
         _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{options.Transport}'."),
     };

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Yappr.Mcp.Ollama": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:59340;http://localhost:59341"
+    }
+  }
+}
