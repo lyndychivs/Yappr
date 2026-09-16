@@ -7,8 +7,8 @@ using Projects;
 
 internal static class Program
 {
-    private const string DiscordServiceName = "yappr-discord";
-    private const string McpServiceName = "yappr-mcp";
+    private const string DiscordServiceName = "discord";
+    private const string McpServiceName = "mcp";
     private const string OllamaServiceName = "ollama";
 
     private static void Main(string[] args)

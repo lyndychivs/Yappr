@@ -1,5 +1,6 @@
+name: yappr
 services:
-    yappr-dashboard:
+    dashboard:
         image: "mcr.microsoft.com/dotnet/nightly/aspire-dashboard:latest"
         environment:
             ASPIRE_DASHBOARD_FORWARDEDHEADERS_ENABLED: "true"
@@ -14,7 +15,7 @@ services:
         networks:
             - "aspire"
         restart: "always"
-    yappr-discord:
+    discord:
         image: "yappr-discord:latest"
         build:
             context: ".."
@@ -23,7 +24,7 @@ services:
             OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
             OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
             OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
-            OTEL_EXPORTER_OTLP_ENDPOINT: "http://yappr-dashboard:${ASPIRE_OTLP_PORT}"
+            OTEL_EXPORTER_OTLP_ENDPOINT: "http://dashboard:${ASPIRE_OTLP_PORT}"
             OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
             OTEL_SERVICE_NAME: "yappr-discord"
             OTEL_EXPORTER_OTLP_HEADERS: "x-otlp-api-key=${DASHBOARD_OTLP_API_KEY}"
@@ -40,9 +41,9 @@ services:
         volumes:
             - discord-dataprotection:/root/.aspnet/DataProtection-Keys
         depends_on:
-            yappr-dashboard:
+            dashboard:
                 condition: "service_started"
-            yappr-mcp:
+            mcp:
                 condition: "service_started"
         networks:
             - "aspire"
@@ -54,7 +55,7 @@ services:
         networks:
             - "aspire"
         restart: "unless-stopped"
-    yappr-mcp:
+    mcp:
         image: "yappr-mcp:latest"
         build:
             context: ".."
@@ -63,7 +64,7 @@ services:
             OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
             OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
             OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
-            OTEL_EXPORTER_OTLP_ENDPOINT: "http://yappr-dashboard:${ASPIRE_OTLP_PORT}"
+            OTEL_EXPORTER_OTLP_ENDPOINT: "http://dashboard:${ASPIRE_OTLP_PORT}"
             OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
             OTEL_SERVICE_NAME: "yappr-mcp"
             OTEL_EXPORTER_OTLP_HEADERS: "x-otlp-api-key=${DASHBOARD_OTLP_API_KEY}"
@@ -71,7 +72,7 @@ services:
             Ollama__Endpoint: "http://ollama:11434"
             Ollama__Model: "${OLLAMA_MODEL}"
         depends_on:
-            yappr-dashboard:
+            dashboard:
                 condition: "service_started"
             ollama:
                 condition: "service_started"

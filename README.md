@@ -30,7 +30,7 @@ Yapping, summarized.
 | Unit (`Yappr.Mcp.Ollama`) | `make test` | `OllamaChatTool`'s request/response handling against a fake Ollama backend |
 | Integration | `make test` | `McpClientToolInvoker` against a real MCP server (`Yappr.McpTestServer`) over stdio |
 | Integration (`Yappr.Mcp.Ollama`) | `make test` | The real `Yappr.Mcp.Ollama` host over HTTP, with Ollama itself stubbed |
-| Functional (manual) | see Quick Start | Real `/tldr` round trip through `yappr-mcp` + a real Ollama model, run locally against `make compose` |
+| Functional (manual) | see Quick Start | Real `/tldr` round trip through `mcp` + a real Ollama model, run locally against `make compose` |
 
 ## Make
 
@@ -60,9 +60,9 @@ docker compose -f deploy/docker-compose.yaml exec ollama ollama pull llama3.2:3b
 | Variable | Purpose |
 | --- | --- |
 | `DISCORD_TOKEN` / `DISCORD_PUBLIC_KEY` | Discord bot credentials |
-| `MCP_TRANSPORT` | `Stdio` or `Http` (defaults to `Http`, pointed at `yappr-mcp`) |
+| `MCP_TRANSPORT` | `Stdio` or `Http` (defaults to `Http`, pointed at `mcp`) |
 | `MCP_COMMAND` / `MCP_ARGUMENTS` | Command to launch the MCP server (stdio transport only) |
-| `MCP_HTTP_ENDPOINT` | URL of the MCP server (http transport); pre-wired to `yappr-mcp` in compose |
+| `MCP_HTTP_ENDPOINT` | URL of the MCP server (http transport); pre-wired to `mcp` in compose |
 | `MCP_TOOL_NAME` | Name of the MCP tool to invoke for summarization |
-| `OLLAMA_MODEL` | Local model `yappr-mcp` asks Ollama to run (must be pulled once, see Quick Start). Size to available RAM — larger models can be OOM-killed on constrained hosts |
+| `OLLAMA_MODEL` | Local model `mcp` asks Ollama to run (must be pulled once, see Quick Start). Size to available RAM — larger models can be OOM-killed on constrained hosts |
 | `TLDR_MAX_DAYS` / `TLDR_MAX_HOURS` / `TLDR_MAX_MESSAGES` | Caps enforced on `/tldr` requests |
