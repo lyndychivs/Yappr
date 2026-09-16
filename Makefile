@@ -14,13 +14,18 @@ build: ## Build the Solution in Release mode
 build-discord: ## Build Yappr.Discord Docker image (yappr-discord:latest)
 	docker build -f src/Yappr.Discord/Dockerfile -t yappr-discord:latest .
 
-build-all: build-discord ## Builds all Docker images
+build-mcp: ## Build Yappr.Mcp.Ollama Docker image (yappr-mcp:latest)
+	docker build -f src/Yappr.Mcp.Ollama/Dockerfile -t yappr-mcp:latest .
+
+build-all: build-discord build-mcp ## Builds all Docker images
 
 # Test
 test: ## Run Unit and Integration Tests
 	dotnet test --project tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj --configuration Release --no-build
 	dotnet test --project tests/unit/Yappr.Discord.Unit.Tests/Yappr.Discord.Unit.Tests.csproj --configuration Release --no-build
+	dotnet test --project tests/unit/Yappr.Mcp.Ollama.Unit.Tests/Yappr.Mcp.Ollama.Unit.Tests.csproj --configuration Release --no-build
 	dotnet test --project tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj --configuration Release --no-build
+	dotnet test --project tests/integration/Yappr.Mcp.Ollama.Integration.Tests/Yappr.Mcp.Ollama.Integration.Tests.csproj --configuration Release --no-build
 
 mutate: ## Run Stryker Mutation Testing
 	dotnet stryker --config-file tests/unit/Yappr.Unit.Tests/stryker-config.json

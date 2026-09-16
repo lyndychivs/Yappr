@@ -17,6 +17,7 @@ Yapping, summarized.
 | `src/Yappr` | Core logic: window resolution, prompt building, summarizer orchestration |
 | `src/Yappr.Models` | Shared DTOs and options types |
 | `src/Yappr.Discord` | The bot host — NetCord gateway client, `/tldr` and `/help` slash commands |
+| `src/Yappr.Mcp.Ollama` | MCP server exposing a `chat` tool backed by a local Ollama model |
 | `src/Yappr.ServiceDefaults` | OpenTelemetry/health-check wiring, shared with the AppHost |
 | `src/Yappr.AppHost` | .NET Aspire orchestrator for local dev (bot + Aspire dashboard) |
 
@@ -26,7 +27,10 @@ Yapping, summarized.
 | --- | --- | --- |
 | Unit | `make test` | Window resolution, prompt building, summarizer logic (mocked MCP client) |
 | Unit (Discord) | `make test` | `/tldr` command surface (subcommand names/attributes) |
+| Unit (`Yappr.Mcp.Ollama`) | `make test` | `OllamaChatTool`'s request/response handling against a fake Ollama backend |
 | Integration | `make test` | `McpClientToolInvoker` against a real MCP server (`Yappr.McpTestServer`) over stdio |
+| Integration (`Yappr.Mcp.Ollama`) | `make test` | The real `Yappr.Mcp.Ollama` host over HTTP, with Ollama itself stubbed |
+| Functional (manual) | see Quick Start | Real `/tldr` round trip through `yappr-mcp` + a real Ollama model, run locally against `make compose` |
 
 ## Make
 
@@ -45,8 +49,10 @@ make mutate     # Stryker mutation testing
 
 ```
 cp .env.template .env
-# fill in DISCORD_TOKEN, DISCORD_PUBLIC_KEY, and the MCP_* variables in .env
+# fill in DISCORD_TOKEN, DISCORD_PUBLIC_KEY, and OLLAMA_MODEL in .env
 make compose
+# one-time: pull the configured model into the ollama container
+docker compose -f deploy/docker-compose.yaml exec ollama ollama pull llama3.1:8b
 ```
 
 ## Configuration
@@ -54,8 +60,9 @@ make compose
 | Variable | Purpose |
 | --- | --- |
 | `DISCORD_TOKEN` / `DISCORD_PUBLIC_KEY` | Discord bot credentials |
-| `MCP_TRANSPORT` | `Stdio` or `Http` |
-| `MCP_COMMAND` / `MCP_ARGUMENTS` | Command to launch the MCP server (stdio transport) |
-| `MCP_HTTP_ENDPOINT` | URL of an already-running MCP server (http transport) |
+| `MCP_TRANSPORT` | `Stdio` or `Http` (defaults to `Http`, pointed at `yappr-mcp`) |
+| `MCP_COMMAND` / `MCP_ARGUMENTS` | Command to launch the MCP server (stdio transport only) |
+| `MCP_HTTP_ENDPOINT` | URL of the MCP server (http transport); pre-wired to `yappr-mcp` in compose |
 | `MCP_TOOL_NAME` | Name of the MCP tool to invoke for summarization |
+| `OLLAMA_MODEL` | Local model `yappr-mcp` asks Ollama to run (must be pulled once, see Quick Start) |
 | `TLDR_MAX_DAYS` / `TLDR_MAX_HOURS` / `TLDR_MAX_MESSAGES` | Caps enforced on `/tldr` requests |

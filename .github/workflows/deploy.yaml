@@ -34,3 +34,4 @@ jobs:
                   MCP_ARGUMENTS: ${{ vars.MCP_ARGUMENTS }}
                   MCP_HTTP_ENDPOINT: ${{ vars.MCP_HTTP_ENDPOINT }}
                   MCP_TOOL_NAME: ${{ vars.MCP_TOOL_NAME }}
+                  OLLAMA_MODEL: ${{ vars.OLLAMA_MODEL }}

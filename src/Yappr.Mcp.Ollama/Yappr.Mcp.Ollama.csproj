@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <ItemGroup>
+        <PackageReference Include="ModelContextProtocol.AspNetCore" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Yappr.Models\Yappr.Models.csproj" />
+        <ProjectReference Include="..\Yappr.ServiceDefaults\Yappr.ServiceDefaults.csproj" />
+    </ItemGroup>
+</Project>

@@ -1,3 +1,7 @@
 services:
     yappr-discord:
         restart: "always"
+    yappr-mcp:
+        restart: "always"
+    ollama:
+        restart: "always"

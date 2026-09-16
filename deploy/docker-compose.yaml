@@ -42,6 +42,39 @@ services:
         depends_on:
             yappr-dashboard:
                 condition: "service_started"
+            yappr-mcp:
+                condition: "service_started"
+        networks:
+            - "aspire"
+        restart: "unless-stopped"
+    ollama:
+        image: "ollama/ollama:latest"
+        volumes:
+            - ollama-models:/root/.ollama
+        networks:
+            - "aspire"
+        restart: "unless-stopped"
+    yappr-mcp:
+        image: "yappr-mcp:latest"
+        build:
+            context: ".."
+            dockerfile: "src/Yappr.Mcp.Ollama/Dockerfile"
+        environment:
+            OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES: "true"
+            OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES: "true"
+            OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY: "in_memory"
+            OTEL_EXPORTER_OTLP_ENDPOINT: "http://yappr-dashboard:${ASPIRE_OTLP_PORT}"
+            OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+            OTEL_SERVICE_NAME: "yappr-mcp"
+            OTEL_EXPORTER_OTLP_HEADERS: "x-otlp-api-key=${DASHBOARD_OTLP_API_KEY}"
+            DOTNET_ENVIRONMENT: "Production"
+            Ollama__Endpoint: "http://ollama:11434"
+            Ollama__Model: "${OLLAMA_MODEL}"
+        depends_on:
+            yappr-dashboard:
+                condition: "service_started"
+            ollama:
+                condition: "service_started"
         networks:
             - "aspire"
         restart: "unless-stopped"
@@ -50,3 +83,4 @@ networks:
         driver: "bridge"
 volumes:
     discord-dataprotection:
+    ollama-models:
