@@ -68,7 +68,9 @@
     <Project Path="src/Yappr.Mcp.Ollama/Yappr.Mcp.Ollama.csproj">
         <Build Solution="Stryker|*" Project="false" />
     </Project>
-    <Project Path="tests/unit/Yappr.Mcp.Ollama.Unit.Tests/Yappr.Mcp.Ollama.Unit.Tests.csproj" />
+    <Project Path="tests/unit/Yappr.Mcp.Ollama.Unit.Tests/Yappr.Mcp.Ollama.Unit.Tests.csproj">
+        <Build Solution="Stryker|*" Project="false" />
+    </Project>
     <Project Path="src/Yappr.Models/Yappr.Models.csproj" />
     <Project Path="src/Yappr.ServiceDefaults/Yappr.ServiceDefaults.csproj">
         <Build Solution="Stryker|*" Project="false" />
