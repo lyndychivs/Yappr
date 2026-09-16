@@ -65,10 +65,20 @@ jobs:
         timeout-minutes: 5
         permissions:
             actions: read
-            checks: write
+            contents: read
         steps:
+            # Mints a short-lived token scoped to just "checks:write" via a dedicated GitHub App,
+            # so this job doesn't need the repo-wide GITHUB_TOKEN to have write access.
+            - name: Generate Checks Token
+              id: app_token
+              uses: actions/create-github-app-token@v2
+              with:
+                  app-id: ${{ vars.YAPPR_APP_ID }}
+                  private-key: ${{ secrets.YAPPR_APP_PRIVATE_KEY }}
+
             - uses: dorny/test-reporter@v3
               with:
+                token: ${{ steps.app_token.outputs.token }}
                 name: Publish Test Results
                 artifact: test-results
                 path: '**/*.trx'
