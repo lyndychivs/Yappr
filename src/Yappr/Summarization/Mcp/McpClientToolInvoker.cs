@@ -43,7 +43,7 @@ public sealed class McpClientToolInvoker(IOptions<McpOptions> options) : IMcpToo
             : textBlock.Text;
     }
 
-    private IClientTransport CreateTransport() => options.Transport switch
+    internal IClientTransport CreateTransport() => options.Transport switch
     {
         McpTransportType.Stdio => new StdioClientTransport(new StdioClientTransportOptions
         {

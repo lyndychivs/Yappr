@@ -18,7 +18,11 @@ public sealed class TldrWindowResolverTests
     {
         TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, value, limits);
 
-        Assert.That(result.IsValid, Is.False);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.ValidationError, Is.EqualTo("The value must be greater than zero."));
+        }
     }
 
     [Test]
@@ -45,8 +49,16 @@ public sealed class TldrWindowResolverTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.IsValid, Is.False);
-            Assert.That(result.ValidationError, Does.Contain("days"));
+            Assert.That(result.ValidationError, Is.EqualTo("`days` can be at most 30."));
         }
+    }
+
+    [Test]
+    public void Resolve_DaysAtLimit_ReturnsTimeCutoff()
+    {
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, limits.MaxDays, limits);
+
+        Assert.That(result.IsValid, Is.True);
     }
 
     [Test]
@@ -54,7 +66,26 @@ public sealed class TldrWindowResolverTests
     {
         TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Hours, limits.MaxHours + 1, limits);
 
-        Assert.That(result.IsValid, Is.False);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.ValidationError, Is.EqualTo("`hours` can be at most 720."));
+        }
+    }
+
+    [Test]
+    public void Resolve_HoursAtLimit_ReturnsTimeCutoff()
+    {
+        DateTimeOffset before = DateTimeOffset.UtcNow.AddHours(-limits.MaxHours);
+
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Hours, limits.MaxHours, limits);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsValid, Is.True);
+            Assert.That(result.SinceUtc, Is.Not.Null);
+            Assert.That(result.SinceUtc!.Value, Is.EqualTo(before).Within(TimeSpan.FromSeconds(5)));
+        }
     }
 
     [Test]
@@ -75,6 +106,28 @@ public sealed class TldrWindowResolverTests
     {
         TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, limits.MaxMessages + 1, limits);
 
-        Assert.That(result.IsValid, Is.False);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsValid, Is.False);
+            Assert.That(result.ValidationError, Is.EqualTo("`messages` can be at most 500."));
+        }
+    }
+
+    [Test]
+    public void Resolve_MessagesAtLimit_ReturnsMessageLimit()
+    {
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, limits.MaxMessages, limits);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsValid, Is.True);
+            Assert.That(result.MessageLimit, Is.EqualTo(limits.MaxMessages));
+        }
+    }
+
+    [Test]
+    public void Resolve_NullLimits_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => TldrWindowResolver.Resolve(TldrWindowKind.Days, 1, null!));
     }
 }
