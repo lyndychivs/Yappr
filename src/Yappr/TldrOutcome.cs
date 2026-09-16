@@ -6,9 +6,9 @@ public sealed record TldrOutcome
 {
     private TldrOutcome(bool isSuccess, string? error, SummaryResult? result)
     {
-        this.IsSuccess = isSuccess;
-        this.Error = error;
-        this.Result = result;
+        IsSuccess = isSuccess;
+        Error = error;
+        Result = result;
     }
 
     public bool IsSuccess { get; }
@@ -17,7 +17,7 @@ public sealed record TldrOutcome
 
     public SummaryResult? Result { get; }
 
-    public static TldrOutcome Success(SummaryResult result) => new(true, null, result);
+    public static TldrOutcome Success(SummaryResult result) => new(isSuccess: true, error: null, result);
 
-    public static TldrOutcome Failure(string error) => new(false, error, null);
+    public static TldrOutcome Failure(string error) => new(isSuccess: false, error, result: null);
 }

@@ -10,10 +10,10 @@ public sealed record TldrWindowResolution
 {
     private TldrWindowResolution(bool isValid, string? validationError, DateTimeOffset? sinceUtc, int? messageLimit)
     {
-        this.IsValid = isValid;
-        this.ValidationError = validationError;
-        this.SinceUtc = sinceUtc;
-        this.MessageLimit = messageLimit;
+        IsValid = isValid;
+        ValidationError = validationError;
+        SinceUtc = sinceUtc;
+        MessageLimit = messageLimit;
     }
 
     public bool IsValid { get; }
@@ -24,9 +24,9 @@ public sealed record TldrWindowResolution
 
     public int? MessageLimit { get; }
 
-    public static TldrWindowResolution ForTimeCutoff(DateTimeOffset sinceUtc) => new(true, null, sinceUtc, null);
+    public static TldrWindowResolution ForTimeCutoff(DateTimeOffset sinceUtc) => new(isValid: true, validationError: null, sinceUtc, messageLimit: null);
 
-    public static TldrWindowResolution ForMessageLimit(int messageLimit) => new(true, null, null, messageLimit);
+    public static TldrWindowResolution ForMessageLimit(int messageLimit) => new(isValid: true, validationError: null, sinceUtc: null, messageLimit);
 
-    public static TldrWindowResolution Invalid(string validationError) => new(false, validationError, null, null);
+    public static TldrWindowResolution Invalid(string validationError) => new(isValid: false, validationError, sinceUtc: null, messageLimit: null);
 }

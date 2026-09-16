@@ -9,7 +9,7 @@ public sealed partial class HelpSlashCommand(ILogger<HelpSlashCommand> logger) :
     [SlashCommand("help", "Help with Yappr")]
     public string GetHelp()
     {
-        LogReceivedInteraction(logger, this.Context.Interaction.Data.Name, this.Context.User.Username, this.Context.User.Id);
+        LogReceivedInteraction(logger, Context.Interaction.Data.Name, Context.User.Username, Context.User.Id);
 
         return "# 🗣️ Yappr — `/tldr` parameters\n" +
             "**`/tldr days count:<n>`** — summarize the last `n` days of this channel\n" +

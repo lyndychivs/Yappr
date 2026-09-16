@@ -25,7 +25,7 @@ public sealed class McpSummarizerTests
             new("Bob", "World", DateTimeOffset.UtcNow),
         };
 
-        var toolInvoker = new Mock<IMcpToolInvoker>(MockBehavior.Loose);
+        var toolInvoker = new Mock<IMcpToolInvoker>(MockBehavior.Strict);
         toolInvoker
             .Setup(t => t.InvokeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync("  A short summary.  ");
@@ -34,11 +34,11 @@ public sealed class McpSummarizerTests
 
         SummaryResult result = await summarizer.SummarizeAsync(messages, CancellationToken.None);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Summary, Is.EqualTo("A short summary."));
             Assert.That(result.MessageCount, Is.EqualTo(2));
-        });
+        }
     }
 
     [Test]
@@ -47,7 +47,7 @@ public sealed class McpSummarizerTests
         var messages = new List<ChannelMessage> { new("Alice", "Unique message content", DateTimeOffset.UtcNow) };
 
         string? capturedPrompt = null;
-        var toolInvoker = new Mock<IMcpToolInvoker>(MockBehavior.Loose);
+        var toolInvoker = new Mock<IMcpToolInvoker>(MockBehavior.Strict);
         toolInvoker
             .Setup(t => t.InvokeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .Callback<string, CancellationToken>((prompt, _) => capturedPrompt = prompt)
