@@ -28,7 +28,7 @@ internal static class Program
 
         IResourceBuilder<ProjectResource> mcpService = builder.AddProject<Yappr_Mcp_Ollama>(McpServiceName)
             .WithEnvironment("Ollama__Endpoint", ollama.GetEndpoint("http"))
-            .WithEnvironment("Ollama__Model", builder.Configuration["Ollama:Model"] ?? "llama3.1:8b")
+            .WithEnvironment("Ollama__Model", builder.Configuration["Ollama:Model"] ?? "llama3.2:3b")
             .WaitFor(ollama);
 
         IResourceBuilder<ProjectResource> discordService = builder.AddProject<Yappr_Discord>(DiscordServiceName)

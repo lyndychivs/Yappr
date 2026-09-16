@@ -52,7 +52,7 @@ cp .env.template .env
 # fill in DISCORD_TOKEN, DISCORD_PUBLIC_KEY, and OLLAMA_MODEL in .env
 make compose
 # one-time: pull the configured model into the ollama container
-docker compose -f deploy/docker-compose.yaml exec ollama ollama pull llama3.1:8b
+docker compose -f deploy/docker-compose.yaml exec ollama ollama pull llama3.2:3b
 ```
 
 ## Configuration
@@ -64,5 +64,5 @@ docker compose -f deploy/docker-compose.yaml exec ollama ollama pull llama3.1:8b
 | `MCP_COMMAND` / `MCP_ARGUMENTS` | Command to launch the MCP server (stdio transport only) |
 | `MCP_HTTP_ENDPOINT` | URL of the MCP server (http transport); pre-wired to `yappr-mcp` in compose |
 | `MCP_TOOL_NAME` | Name of the MCP tool to invoke for summarization |
-| `OLLAMA_MODEL` | Local model `yappr-mcp` asks Ollama to run (must be pulled once, see Quick Start) |
+| `OLLAMA_MODEL` | Local model `yappr-mcp` asks Ollama to run (must be pulled once, see Quick Start). Size to available RAM — larger models can be OOM-killed on constrained hosts |
 | `TLDR_MAX_DAYS` / `TLDR_MAX_HOURS` / `TLDR_MAX_MESSAGES` | Caps enforced on `/tldr` requests |
