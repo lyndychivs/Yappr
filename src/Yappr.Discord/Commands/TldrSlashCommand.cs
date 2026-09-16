@@ -1,5 +1,6 @@
 namespace Yappr.Discord.Commands;
 
+using System;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,6 +45,18 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         string username,
         ulong userId);
 
+    [LoggerMessage(
+        EventId = 2,
+        Level = LogLevel.Error,
+        Message = "Failed to summarize /tldr {Kind}:{Count} request from {Username} {UserId}")]
+    private static partial void LogSummarizationFailed(
+        ILogger logger,
+        Exception exception,
+        TldrWindowKind kind,
+        int count,
+        string username,
+        ulong userId);
+
     private async Task RunAsync(TldrWindowKind kind, int count)
     {
         LogReceivedInteraction(logger, kind, count, Context.User.Username, Context.User.Id);
@@ -55,13 +68,22 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
             Content = "🐱 the cat is chewing through the yap...",
         }));
 
-        TldrOutcome outcome = await orchestrator.RunAsync(Context.Channel.Id, kind, count, CancellationToken.None);
+        string content;
+        try
+        {
+            TldrOutcome outcome = await orchestrator.RunAsync(Context.Channel.Id, kind, count, CancellationToken.None);
 
-        string content = outcome.IsSuccess
-            ? string.Create(
-                CultureInfo.InvariantCulture,
-                $"### 📋 TL;DR *(from {outcome.Result!.MessageCount} messages)*\n{outcome.Result.Summary}")
-            : $"⚠️ {outcome.Error}";
+            content = outcome.IsSuccess
+                ? string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"### 📋 TL;DR *(from {outcome.Result!.MessageCount} messages)*\n{outcome.Result.Summary}")
+                : $"⚠️ {outcome.Error}";
+        }
+        catch (Exception exception)
+        {
+            LogSummarizationFailed(logger, exception, kind, count, Context.User.Username, Context.User.Id);
+            content = "⚠️ Something went wrong while summarizing. Please try again.";
+        }
 
         await ModifyResponseAsync(options => options.Content = content);
     }

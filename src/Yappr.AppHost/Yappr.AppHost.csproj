@@ -8,6 +8,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Yappr.Discord\Yappr.Discord.csproj" />
         <ProjectReference Include="..\Yappr.Mcp.Ollama\Yappr.Mcp.Ollama.csproj" />
+        <ProjectReference Include="..\Yappr.Models\Yappr.Models.csproj" IsAspireProjectResource="false" />
     </ItemGroup>
 
     <ItemGroup>

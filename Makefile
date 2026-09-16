@@ -1,4 +1,4 @@
-.PHONY: help build build-discord build-all clean test mutate compose stop token
+.PHONY: help build build-discord build-mcp build-all clean test mutate compose stop token
 
 # Variables
 COMPOSE_FILE = deploy/docker-compose.yaml
@@ -39,6 +39,7 @@ stop: ## Stops Yappr Docker images and removes volumes
 
 clean: stop ## Clean Yappr build artifacts and remove Yappr Docker images
 	docker rmi yappr-discord:latest 2>/dev/null || true
+	docker rmi yappr-mcp:latest 2>/dev/null || true
 	dotnet clean
 	rm -rf **/bin **/obj TestResults
 

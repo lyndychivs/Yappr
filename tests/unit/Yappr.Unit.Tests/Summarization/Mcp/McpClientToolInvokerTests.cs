@@ -1,6 +1,7 @@
 namespace Yappr.Unit.Tests.Summarization.Mcp;
 
 using System;
+using System.Net.Http;
 
 using Microsoft.Extensions.Options;
 
@@ -17,7 +18,7 @@ public sealed class McpClientToolInvokerTests
     [Test]
     public void CreateTransport_StdioWithCommand_ReturnsStdioTransport()
     {
-        var invoker = new McpClientToolInvoker(Options.Create(new McpOptions
+        var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), Options.Create(new McpOptions
         {
             Transport = McpTransportType.Stdio,
             Command = "some-mcp-server",
@@ -31,7 +32,7 @@ public sealed class McpClientToolInvokerTests
     [Test]
     public void CreateTransport_StdioWithoutCommand_Throws()
     {
-        var invoker = new McpClientToolInvoker(Options.Create(new McpOptions
+        var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), Options.Create(new McpOptions
         {
             Transport = McpTransportType.Stdio,
             Command = null,
@@ -45,7 +46,7 @@ public sealed class McpClientToolInvokerTests
     [Test]
     public void CreateTransport_HttpWithEndpoint_ReturnsHttpTransport()
     {
-        var invoker = new McpClientToolInvoker(Options.Create(new McpOptions
+        var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), Options.Create(new McpOptions
         {
             Transport = McpTransportType.Http,
             HttpEndpoint = "https://example.test/mcp",
@@ -59,7 +60,7 @@ public sealed class McpClientToolInvokerTests
     [Test]
     public void CreateTransport_HttpWithoutEndpoint_Throws()
     {
-        var invoker = new McpClientToolInvoker(Options.Create(new McpOptions
+        var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), Options.Create(new McpOptions
         {
             Transport = McpTransportType.Http,
             HttpEndpoint = null,
@@ -73,7 +74,7 @@ public sealed class McpClientToolInvokerTests
     [Test]
     public void CreateTransport_UnsupportedTransportType_Throws()
     {
-        var invoker = new McpClientToolInvoker(Options.Create(new McpOptions
+        var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), Options.Create(new McpOptions
         {
             Transport = (McpTransportType)99,
         }));
@@ -81,5 +82,10 @@ public sealed class McpClientToolInvokerTests
         InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => invoker.CreateTransport())!;
 
         Assert.That(exception.Message, Is.EqualTo("Unsupported Mcp:Transport value '99'."));
+    }
+
+    private sealed class StubHttpClientFactory : IHttpClientFactory
+    {
+        public HttpClient CreateClient(string name) => new();
     }
 }

@@ -5,6 +5,8 @@ using Aspire.Hosting.ApplicationModel;
 
 using Projects;
 
+using Yappr.Models;
+
 internal static class Program
 {
     private const string DiscordServiceName = "discord";
@@ -28,7 +30,7 @@ internal static class Program
 
         IResourceBuilder<ProjectResource> mcpService = builder.AddProject<Yappr_Mcp_Ollama>(McpServiceName)
             .WithEnvironment("Ollama__Endpoint", ollama.GetEndpoint("http"))
-            .WithEnvironment("Ollama__Model", builder.Configuration["Ollama:Model"] ?? "llama3.2:3b")
+            .WithEnvironment("Ollama__Model", builder.Configuration["Ollama:Model"] ?? OllamaOptions.DefaultModel)
             .WaitFor(ollama);
 
         IResourceBuilder<ProjectResource> discordService = builder.AddProject<Yappr_Discord>(DiscordServiceName)

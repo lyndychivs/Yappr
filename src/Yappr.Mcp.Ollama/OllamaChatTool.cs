@@ -42,7 +42,11 @@ public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOption
             .PostAsJsonAsync("/api/generate", request, cancellationToken)
             .ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            throw new InvalidOperationException($"Ollama returned {(int)response.StatusCode} {response.StatusCode}: {body}");
+        }
 
         OllamaGenerateResponse? result = await response.Content
             .ReadFromJsonAsync<OllamaGenerateResponse>(cancellationToken)
