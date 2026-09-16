@@ -2,6 +2,10 @@
 
 ![Yappr](resources/yappr-social.jpg)
 
+[![Build & Test](https://github.com/lyndychivs/Yappr/actions/workflows/build_test.yaml/badge.svg?branch=main)](https://github.com/lyndychivs/Yappr/actions/workflows/build_test.yaml)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Flyndychivs%2FYappr%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/lyndychivs/Yappr/main)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lyndychivs/Yappr)
+
 A Discord bot with one job: `/tldr`. It summarizes a window of a channel's recent activity — by day count, hour
 count, or message count — into a short, skimmable TL;DR, using an LLM reached through an MCP server.
 
