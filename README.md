@@ -1,5 +1,7 @@
 # Yappr
 
+![Yappr](resources/yappr-social.jpg)
+
 A Discord bot with one job: `/tldr`. It summarizes a window of a channel's recent activity — by day count, hour
 count, or message count — into a short, skimmable TL;DR, using an LLM reached through an MCP server.
 
