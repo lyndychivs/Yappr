@@ -65,7 +65,7 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         // generation), so acknowledge immediately and edit the response once the summary is ready.
         await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
         {
-            Content = "🐱 the cat is chewing through the yap...",
+            Content = "<a:yap:1549927339935269026> sniffing out the yap...",
         }));
 
         string content;
