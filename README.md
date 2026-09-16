@@ -6,40 +6,9 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Flyndychivs%2FYappr%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/lyndychivs/Yappr/main)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lyndychivs/Yappr)
 
-A Discord bot with one job: `/tldr`. It summarizes a window of a channel's recent activity — by day count, hour
-count, or message count — into a short, skimmable TL;DR, using an LLM reached through an MCP server.
+A Discord bot with one job: `/tldr`. It summarizes a channel's recent activity into a short, skimmable TL;DR.
 
-## High Level
-
-```
-Discord user runs /tldr days|hours|messages
-        │
-        ▼
- Yappr.Discord (NetCord slash command)
-        │
-        ▼
- TldrOrchestrator (Yappr core)
-        │
-        ├── validate window against configured caps
-        ├── IMessageFetcher → Discord REST API (channel history)
-        └── ISummarizer → McpSummarizer → MCP server ("chatgpt" MCP for now)
-        │
-        ▼
- Summary posted back to Discord
-```
-
-`ISummarizer` is a swap point: the initial implementation (`McpSummarizer`) talks to a configured MCP server via
-the official `ModelContextProtocol` .NET SDK, but nothing in the command or orchestration layer depends on MCP
-specifically — a direct API-based summarizer can be dropped in later without touching `Yappr.Discord`.
-
-## Prerequisites
-
-| Tool | Version |
-| --- | --- |
-| .NET SDK | 10.0.200+ (see `global.json`) |
-| Docker | for `make compose` / running the bot |
-| A Discord application | with the bot token, public key, and the privileged **Message Content Intent** enabled |
-| An MCP server | exposing a chat/completion tool (e.g. a "chatgpt" MCP server) |
+Yapping, summarized.
 
 ## Projects
 
@@ -90,5 +59,3 @@ make compose
 | `MCP_HTTP_ENDPOINT` | URL of an already-running MCP server (http transport) |
 | `MCP_TOOL_NAME` | Name of the MCP tool to invoke for summarization |
 | `TLDR_MAX_DAYS` / `TLDR_MAX_HOURS` / `TLDR_MAX_MESSAGES` | Caps enforced on `/tldr` requests |
-
-Yapping, summarized.
