@@ -1,4 +1,4 @@
-.PHONY: help build build-discord build-all clean test mutate compose stop stop-volumes token
+.PHONY: help build build-discord build-all clean test mutate compose stop token
 
 # Variables
 COMPOSE_FILE = deploy/docker-compose.yaml
@@ -34,13 +34,10 @@ mutate: ## Run Stryker Mutation Testing
 compose: ## Composes Yappr Docker images
 	docker compose --file $(COMPOSE_FILE) --env-file .env up --detach --build
 
-stop: ## Stops Yappr Docker images
-	docker compose --file $(COMPOSE_FILE) --env-file .env down
-
-stop-volumes: ## Stops Yappr Docker images and removes volumes
+stop: ## Stops Yappr Docker images and removes volumes
 	docker compose --file $(COMPOSE_FILE) --env-file .env down --volumes
 
-clean: stop-volumes ## Clean Yappr build artifacts and remove Yappr Docker images
+clean: stop ## Clean Yappr build artifacts and remove Yappr Docker images
 	docker rmi yappr-discord:latest 2>/dev/null || true
 	dotnet clean
 	rm -rf **/bin **/obj TestResults
