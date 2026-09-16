@@ -50,7 +50,10 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
 
         // Summarization can take well over Discord's 3-second interaction response window (model load +
         // generation), so acknowledge immediately and edit the response once the summary is ready.
-        await RespondAsync(InteractionCallback.DeferredMessage());
+        await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
+        {
+            Content = "🐱 the cat is chewing through the yap...",
+        }));
 
         TldrOutcome outcome = await orchestrator.RunAsync(Context.Channel.Id, kind, count, CancellationToken.None);
 
