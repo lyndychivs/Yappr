@@ -1,4 +1,4 @@
-.PHONY: help build build-discord build-all clean test mutate compose stop stop-volumes logs token restart
+.PHONY: help build build-discord build-all clean test mutate compose stop stop-volumes token
 
 # Variables
 COMPOSE_FILE = deploy/docker-compose.yaml
@@ -39,11 +39,6 @@ stop: ## Stops Yappr Docker images
 
 stop-volumes: ## Stops Yappr Docker images and removes volumes
 	docker compose --file $(COMPOSE_FILE) --env-file .env down --volumes
-
-logs: ## Shows logs for Yappr Docker images
-	@docker compose --file $(COMPOSE_FILE) --env-file .env logs --follow
-
-restart: stop-volumes build-all compose ## Rebuild Yappr Docker images and restart Containers
 
 clean: stop-volumes ## Clean Yappr build artifacts and remove Yappr Docker images
 	docker rmi yappr-discord:latest 2>/dev/null || true

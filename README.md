@@ -40,7 +40,6 @@ Run `make help` to list all targets. Common ones:
 make build      # dotnet build (Release)
 make test       # unit + integration tests
 make compose    # build and start the bot via docker compose
-make logs       # follow container logs
 make stop       # stop containers
 make mutate     # Stryker mutation testing
 ```
