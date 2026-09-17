@@ -24,9 +24,18 @@ public sealed record TldrWindowResolution
 
     public int? MessageLimit { get; }
 
-    public static TldrWindowResolution ForTimeCutoff(DateTimeOffset sinceUtc) => new(isValid: true, validationError: null, sinceUtc, messageLimit: null);
+    public static TldrWindowResolution ForTimeCutoff(DateTimeOffset sinceUtc)
+    {
+        return new(isValid: true, validationError: null, sinceUtc, messageLimit: null);
+    }
 
-    public static TldrWindowResolution ForMessageLimit(int messageLimit) => new(isValid: true, validationError: null, sinceUtc: null, messageLimit);
+    public static TldrWindowResolution ForMessageLimit(int messageLimit)
+    {
+        return new(isValid: true, validationError: null, sinceUtc: null, messageLimit);
+    }
 
-    public static TldrWindowResolution Invalid(string validationError) => new(isValid: false, validationError, sinceUtc: null, messageLimit: null);
+    public static TldrWindowResolution Invalid(string validationError)
+    {
+        return new(isValid: false, validationError, sinceUtc: null, messageLimit: null);
+    }
 }

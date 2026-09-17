@@ -20,19 +20,25 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
     public Task DaysAsync(
         [SlashCommandParameter(Name = "count", Description = "Number of days to summarize", MinValue = 1)]
         int count)
-        => RunAsync(TldrWindowKind.Days, count);
+    {
+        return RunAsync(TldrWindowKind.Days, count);
+    }
 
     [SubSlashCommand("hours", "Summarize the last N hours of this channel")]
     public Task HoursAsync(
         [SlashCommandParameter(Name = "count", Description = "Number of hours to summarize", MinValue = 1)]
         int count)
-        => RunAsync(TldrWindowKind.Hours, count);
+    {
+        return RunAsync(TldrWindowKind.Hours, count);
+    }
 
     [SubSlashCommand("messages", "Summarize the last N messages of this channel")]
     public Task MessagesAsync(
         [SlashCommandParameter(Name = "count", Description = "Number of messages to summarize", MinValue = 1)]
         int count)
-        => RunAsync(TldrWindowKind.Messages, count);
+    {
+        return RunAsync(TldrWindowKind.Messages, count);
+    }
 
     [LoggerMessage(
         EventId = 1,

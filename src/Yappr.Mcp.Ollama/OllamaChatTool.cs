@@ -2,6 +2,7 @@ namespace Yappr.Mcp.Ollama;
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
@@ -45,7 +46,7 @@ public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOption
         if (!response.IsSuccessStatusCode)
         {
             string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            throw new InvalidOperationException($"Ollama returned {(int)response.StatusCode} {response.StatusCode}: {body}");
+            throw new InvalidOperationException(string.Create(CultureInfo.InvariantCulture, $"Ollama returned {(int)response.StatusCode} {response.StatusCode}: {body}"));
         }
 
         OllamaGenerateResponse? result = await response.Content

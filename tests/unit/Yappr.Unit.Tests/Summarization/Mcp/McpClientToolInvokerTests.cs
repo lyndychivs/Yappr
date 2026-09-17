@@ -92,7 +92,7 @@ public sealed class McpClientToolInvokerTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(arguments.Count, Is.EqualTo(1));
+            Assert.That(arguments, Has.Count.EqualTo(1));
             Assert.That(arguments["prompt"], Is.EqualTo("summarize this"));
             Assert.That(arguments.ContainsKey("PROMPT"), Is.False, "the key comparer must be ordinal (case-sensitive), not case-insensitive");
         }
@@ -100,6 +100,9 @@ public sealed class McpClientToolInvokerTests
 
     private sealed class StubHttpClientFactory : IHttpClientFactory
     {
-        public HttpClient CreateClient(string name) => new();
+        public HttpClient CreateClient(string name)
+        {
+            return new();
+        }
     }
 }

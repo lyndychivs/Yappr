@@ -42,6 +42,9 @@ public sealed class McpClientToolInvokerTests
 
     private sealed class StubHttpClientFactory : IHttpClientFactory
     {
-        public HttpClient CreateClient(string name) => new();
+        public HttpClient CreateClient(string name)
+        {
+            return new();
+        }
     }
 }

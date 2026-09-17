@@ -14,5 +14,8 @@ public sealed class EchoTools
 {
     [McpServerTool(Name = "chat")]
     [Description("Echoes the given prompt back with a fixed prefix, for integration testing.")]
-    public static string Chat(string prompt) => $"ECHO: {prompt}";
+    public static string Chat(string prompt)
+    {
+        return $"ECHO: {prompt}";
+    }
 }
