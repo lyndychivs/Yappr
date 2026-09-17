@@ -73,8 +73,6 @@ public sealed class TldrPromptBuilderTests
     [Test]
     public void Build_WhenTranscriptExactlyAtBudget_KeepsAllLines()
     {
-        // The rendered line (content + fixed timestamp/author prefix) plus its trailing newline equals the budget
-        // exactly, so the total must NOT be treated as over budget.
         ChannelMessage message = MessageWithRenderedLineLength("A", 'x', TldrPromptBuilder.MaxPromptCharacters - 1, DateTimeOffset.UtcNow);
 
         string prompt = TldrPromptBuilder.Build([message]);
@@ -102,10 +100,6 @@ public sealed class TldrPromptBuilderTests
     [Test]
     public void Build_WhenRunningTotalHitsBudgetExactlyPartway_KeepsThatLineAndDropsOnlyOlderOnes()
     {
-        // Three lines, oldest to newest. Summed from the newest backward, the running total lands on exactly
-        // MaxPromptCharacters after including the middle line: the original ">" comparison must NOT stop there,
-        // so it keeps accumulating, then drops everything older than the middle line once the oldest line pushes
-        // the running total over budget.
         DateTimeOffset now = DateTimeOffset.UtcNow;
         ChannelMessage newest = MessageWithRenderedLineLength("C", 'c', 3_000, now);
         ChannelMessage middle = MessageWithRenderedLineLength("B", 'b', TldrPromptBuilder.MaxPromptCharacters - 3_001 - 1, now.AddMinutes(-1));
