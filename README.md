@@ -21,24 +21,3 @@ Yapping, summarised.
 | `src/Yappr.Mcp.Ollama` | MCP server exposing a `chat` tool backed by a local Ollama model |
 | `src/Yappr.ServiceDefaults` | OpenTelemetry/health-check wiring, shared with the AppHost |
 | `src/Yappr.AppHost` | .NET Aspire orchestrator for local dev (bot + Aspire dashboard) |
-
-## Make
-
-### Quick Start
-
-```
-cp .env.template .env
-# update .env
-make compose
-```
-
-Run `make help` to list all targets. Common ones:
-
-```
-make build      # dotnet build (Release)
-make test       # unit + integration tests
-make compose    # build and start the bot via docker compose (also pulls the configured Ollama model)
-make pull-model # re-pull the configured Ollama model, e.g. after `make stop-volumes` clears its cache
-make stop       # stop containers
-make mutate     # Stryker mutation testing
-```
