@@ -44,7 +44,6 @@ public static class TldrPromptBuilder
 
         if (totalLength > MaxPromptCharacters)
         {
-            // Drop oldest lines first, keeping the most recent conversation within budget.
             int runningLength = 0;
             for (int i = lines.Count - 1; i >= 0; i--)
             {
