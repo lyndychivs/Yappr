@@ -44,37 +44,43 @@
         <File Path="README.md" />
         <File Path="SECURITY.md" />
     </Folder>
+    <Folder Name="/src/">
+        <Project Path="src/Yappr/Yappr.csproj" />
+        <Project Path="src/Yappr.AppHost/Yappr.AppHost.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+        <Project Path="src/Yappr.Discord/Yappr.Discord.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+        <Project Path="src/Yappr.Mcp.Ollama/Yappr.Mcp.Ollama.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+        <Project Path="src/Yappr.Models/Yappr.Models.csproj" />
+        <Project Path="src/Yappr.ServiceDefaults/Yappr.ServiceDefaults.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+    </Folder>
     <Folder Name="/tests/">
         <File Path="tests/.runsettings" />
     </Folder>
-    <Project Path="src/Yappr.AppHost/Yappr.AppHost.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="tests/unit/Yappr.Discord.Unit.Tests/Yappr.Discord.Unit.Tests.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="src/Yappr.Discord/Yappr.Discord.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="tests/integration/Yappr.McpTestServer/Yappr.McpTestServer.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="tests/integration/Yappr.Mcp.Ollama.Integration.Tests/Yappr.Mcp.Ollama.Integration.Tests.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="src/Yappr.Mcp.Ollama/Yappr.Mcp.Ollama.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="tests/unit/Yappr.Mcp.Ollama.Unit.Tests/Yappr.Mcp.Ollama.Unit.Tests.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="src/Yappr.Models/Yappr.Models.csproj" />
-    <Project Path="src/Yappr.ServiceDefaults/Yappr.ServiceDefaults.csproj">
-        <Build Solution="Stryker|*" Project="false" />
-    </Project>
-    <Project Path="tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj" />
-    <Project Path="src/Yappr/Yappr.csproj" />
+    <Folder Name="/tests/unit/">
+        <Project Path="tests/unit/Yappr.Discord.Unit.Tests/Yappr.Discord.Unit.Tests.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+        <Project Path="tests/unit/Yappr.Mcp.Ollama.Unit.Tests/Yappr.Mcp.Ollama.Unit.Tests.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+        <Project Path="tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj" />
+    </Folder>
+    <Folder Name="/tests/integration/">
+        <Project Path="tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+        <Project Path="tests/integration/Yappr.McpTestServer/Yappr.McpTestServer.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+        <Project Path="tests/integration/Yappr.Mcp.Ollama.Integration.Tests/Yappr.Mcp.Ollama.Integration.Tests.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
+    </Folder>
 </Solution>
