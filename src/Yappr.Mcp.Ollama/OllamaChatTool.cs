@@ -15,21 +15,28 @@ using ModelContextProtocol.Server;
 using Yappr.Models;
 
 /// <summary>
-/// Exposes a "chat" MCP tool backed by a local Ollama server's <c>/api/generate</c> endpoint, matching the
-/// contract <c>McpClientToolInvoker</c> expects: a single <c>prompt</c> argument, plain text back.
+/// Exposes a "chat" MCP tool backed by a local Ollama server's <c>/api/generate</c> endpoint.
 /// </summary>
 /// <remarks>
-/// Uses <see cref="IHttpClientFactory"/> directly (a named client) rather than a typed client, because the MCP
-/// SDK constructs tool instances itself (via reflection) rather than resolving them through DI — a typed
-/// <c>HttpClient</c> constructor parameter would silently receive an unconfigured <c>new HttpClient()</c>.
+/// Uses <see cref="IHttpClientFactory"/> directly because the MCP SDK constructs tools via reflection, not
+/// DI, so a typed <c>HttpClient</c> parameter would get an unconfigured instance.
 /// </remarks>
 [McpServerToolType]
 public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOptions<OllamaOptions> options)
 {
+    /// <summary>
+    /// The name of the named <see cref="HttpClient"/> used to reach the Ollama server.
+    /// </summary>
     internal const string HttpClientName = nameof(OllamaChatTool);
 
     private readonly OllamaOptions options = options.Value;
 
+    /// <summary>
+    /// Summarises <paramref name="prompt"/> via the configured Ollama model.
+    /// </summary>
+    /// <param name="prompt">The prompt to summarize.</param>
+    /// <param name="cancellationToken">A token to cancel the call.</param>
+    /// <returns>The generated summary text.</returns>
     [McpServerTool(Name = "chat")]
     [Description("Summarises the given prompt.")]
     public async Task<string> Chat(string prompt, CancellationToken cancellationToken)

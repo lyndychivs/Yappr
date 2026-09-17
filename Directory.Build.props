@@ -67,6 +67,11 @@
         <RunSettingsFilePath>$(MSBuildThisFileDirectory)tests\.runsettings</RunSettingsFilePath>
     </PropertyGroup>
 
+    <!-- Required for StyleCop's SA16xx documentation rules to run; not needed under tests/. -->
+    <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND !$(MSBuildProjectDirectory.Contains('$([System.IO.Path]::DirectorySeparatorChar)tests$([System.IO.Path]::DirectorySeparatorChar)'))">
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+
     <!-- Microsoft.Testing.Platform: opt-in to NUnit runner for test projects -->
     <PropertyGroup Condition="$(MSBuildProjectName.EndsWith('.Tests'))">
         <EnableNUnitRunner>true</EnableNUnitRunner>

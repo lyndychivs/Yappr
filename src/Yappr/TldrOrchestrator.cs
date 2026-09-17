@@ -11,14 +11,22 @@ using Yappr.Summarization;
 using Yappr.Windowing;
 
 /// <summary>
-/// Top-level entry point for `/tldr`: validates the requested window, fetches the matching channel history,
-/// and hands it off to the configured <see cref="ISummariser"/>.
+/// Entry point for `/tldr`: validates the requested window, fetches matching channel history, and hands it
+/// to the configured <see cref="ISummariser"/>.
 /// </summary>
 public sealed class TldrOrchestrator(
     IMessageFetcher messageFetcher,
     ISummariser summariser,
     IOptions<TldrLimitsOptions> limits)
 {
+    /// <summary>
+    /// Runs a `/tldr` request end to end.
+    /// </summary>
+    /// <param name="channelId">The channel to summarize.</param>
+    /// <param name="kind">The kind of window requested (days, hours, or messages).</param>
+    /// <param name="value">The window's numeric value.</param>
+    /// <param name="cancellationToken">A token to cancel the request.</param>
+    /// <returns>The resulting summary, or a user-facing failure reason.</returns>
     public async Task<TldrOutcome> RunAsync(
         ulong channelId,
         TldrWindowKind kind,

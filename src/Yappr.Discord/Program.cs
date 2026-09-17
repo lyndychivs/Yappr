@@ -17,8 +17,16 @@ using Yappr.ServiceDefaults;
 using Yappr.Summarization;
 using Yappr.Summarization.Mcp;
 
+/// <summary>
+/// The Discord bot host: wires up DI, Discord gateway, and MCP client, then runs the bot.
+/// </summary>
 internal static class Program
 {
+    /// <summary>
+    /// The application entry point.
+    /// </summary>
+    /// <param name="args">The command-line arguments.</param>
+    /// <returns>A task that completes when the host shuts down.</returns>
     private static async Task Main(string[] args)
     {
         HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
