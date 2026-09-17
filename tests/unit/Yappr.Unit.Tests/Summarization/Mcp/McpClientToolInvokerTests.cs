@@ -1,6 +1,7 @@
 namespace Yappr.Unit.Tests.Summarization.Mcp;
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 
 using Microsoft.Extensions.Options;
@@ -82,6 +83,19 @@ public sealed class McpClientToolInvokerTests
         InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => invoker.CreateTransport())!;
 
         Assert.That(exception.Message, Is.EqualTo("Unsupported Mcp:Transport value '99'."));
+    }
+
+    [Test]
+    public void BuildArguments_ReturnsSinglePromptEntryUnderOrdinalPromptKey()
+    {
+        IReadOnlyDictionary<string, object?> arguments = McpClientToolInvoker.BuildArguments("summarize this");
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(arguments.Count, Is.EqualTo(1));
+            Assert.That(arguments["prompt"], Is.EqualTo("summarize this"));
+            Assert.That(arguments.ContainsKey("PROMPT"), Is.False, "the key comparer must be ordinal (case-sensitive), not case-insensitive");
+        }
     }
 
     private sealed class StubHttpClientFactory : IHttpClientFactory

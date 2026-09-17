@@ -33,7 +33,7 @@ public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, I
 
         await using McpClient client = await McpClient.CreateAsync(transport, cancellationToken: cancellationToken);
 
-        var arguments = new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = prompt };
+        IReadOnlyDictionary<string, object?> arguments = BuildArguments(prompt);
 
         CallToolResult result = await client.CallToolAsync(
             options.ToolName,
@@ -46,6 +46,9 @@ public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, I
             ? throw new InvalidOperationException($"The MCP tool '{options.ToolName}' did not return any text content.")
             : textBlock.Text;
     }
+
+    internal static IReadOnlyDictionary<string, object?> BuildArguments(string prompt) =>
+        new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = prompt };
 
     internal IClientTransport CreateTransport() => options.Transport switch
     {
