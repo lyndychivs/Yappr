@@ -8,8 +8,8 @@ indent_style = space
 indent_size = 4
 
 [*.{cs,vb}]
-# SA0001: All diagnostics of XML documentation comments has been disabled due to the current project configuration.
-dotnet_diagnostic.SA0001.severity = none
+# CS1591: Missing XML comment for publicly visible type or member (SA1600/SA1601/SA1602 cover this with more nuance)
+dotnet_diagnostic.CS1591.severity = none
 # SA1000: Keywords should be spaced correctly
 dotnet_diagnostic.SA1000.severity = none
 # SA1101: Prefix local calls with this
@@ -60,7 +60,11 @@ dotnet_diagnostic.SA1402.severity = error
 dotnet_diagnostic.IDE0051.severity = warning
 
 [tests/**/*.cs]
-# SA1600, SA1601, SA1602: not required on test code
+# SA0001: All diagnostics of XML documentation comments has been disabled due to the current project configuration.
+dotnet_diagnostic.SA0001.severity = none
+# SA1600: Elements should be documented
 dotnet_diagnostic.SA1600.severity = none
+# SA1601: Partial elements should be documented
 dotnet_diagnostic.SA1601.severity = none
+# SA1602: Enumeration items should be documented
 dotnet_diagnostic.SA1602.severity = none
