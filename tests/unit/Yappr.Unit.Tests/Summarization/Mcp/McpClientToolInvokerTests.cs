@@ -2,7 +2,6 @@ namespace Yappr.Unit.Tests.Summarization.Mcp;
 
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 
 using Microsoft.Extensions.Options;
 
@@ -95,14 +94,6 @@ public sealed class McpClientToolInvokerTests
             Assert.That(arguments, Has.Count.EqualTo(1));
             Assert.That(arguments["prompt"], Is.EqualTo("summarise this"));
             Assert.That(arguments.ContainsKey("PROMPT"), Is.False, "the key comparer must be ordinal (case-sensitive), not case-insensitive");
-        }
-    }
-
-    private sealed class StubHttpClientFactory : IHttpClientFactory
-    {
-        public HttpClient CreateClient(string name)
-        {
-            return new();
         }
     }
 }

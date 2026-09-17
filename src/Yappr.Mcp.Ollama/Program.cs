@@ -21,15 +21,14 @@ builder.Services.AddHttpClient(OllamaChatTool.HttpClientName, (serviceProvider, 
     client.BaseAddress = new Uri(options.Endpoint);
 });
 
-// ServiceDefaults applies a 30s total-request-timeout resilience handler to every HttpClient by default,
-// which is far too short for local LLM generation (cold model load + inference can take minutes). Widen it
-// for this client only.
-builder.Services.Configure<HttpStandardResilienceOptions>(OllamaChatTool.HttpClientName, options =>
-{
-    options.AttemptTimeout.Timeout = TimeSpan.FromMinutes(5);
-    options.TotalRequestTimeout.Timeout = TimeSpan.FromMinutes(5);
-    options.CircuitBreaker.SamplingDuration = TimeSpan.FromMinutes(10);
-});
+builder.Services.AddOptions<HttpStandardResilienceOptions>(OllamaChatTool.HttpClientName)
+    .Configure<IOptions<OllamaOptions>>((options, ollamaOptions) =>
+    {
+        McpResilienceOptions resilience = ollamaOptions.Value.Resilience;
+        options.AttemptTimeout.Timeout = resilience.AttemptTimeout;
+        options.TotalRequestTimeout.Timeout = resilience.TotalRequestTimeout;
+        options.CircuitBreaker.SamplingDuration = resilience.CircuitBreakerSamplingDuration;
+    });
 
 builder.Services.AddMcpServer().WithHttpTransport().WithTools<OllamaChatTool>();
 

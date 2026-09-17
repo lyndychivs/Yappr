@@ -38,7 +38,10 @@ public sealed class TldrPromptBuilderTests
         var messages = new List<ChannelMessage>();
         for (int i = 0; i < 2_000; i++)
         {
-            messages.Add(new ChannelMessage("User", string.Create(CultureInfo.InvariantCulture, $"message number {i} with some padding text to grow the transcript"), DateTimeOffset.UtcNow.AddSeconds(i)));
+            messages.Add(new ChannelMessage(
+                "User",
+                string.Create(CultureInfo.InvariantCulture, $"message number {i} with some padding text to grow the transcript"),
+                DateTimeOffset.UtcNow.AddSeconds(i)));
         }
 
         string prompt = TldrPromptBuilder.Build(messages);

@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,7 +31,7 @@ public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOption
     private readonly OllamaOptions options = options.Value;
 
     [McpServerTool(Name = "chat")]
-    [Description("Summarises the given prompt using the configured local Ollama model.")]
+    [Description("Summarises the given prompt.")]
     public async Task<string> Chat(string prompt, CancellationToken cancellationToken)
     {
         var request = new OllamaGenerateRequest(options.Model, prompt, Stream: false);
@@ -46,21 +45,17 @@ public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOption
         if (!response.IsSuccessStatusCode)
         {
             string body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
-            throw new InvalidOperationException(string.Create(CultureInfo.InvariantCulture, $"Ollama returned {(int)response.StatusCode} {response.StatusCode}: {body}"));
+            throw new InvalidOperationException(
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"Ollama returned {(int)response.StatusCode} {response.StatusCode}: {body}"));
         }
 
         OllamaGenerateResponse? result = await response.Content
             .ReadFromJsonAsync<OllamaGenerateResponse>(cancellationToken)
             .ConfigureAwait(false);
 
-        return result?.Response ?? throw new InvalidOperationException("Ollama did not return a response.");
+        return result?.Response
+            ?? throw new InvalidOperationException("Ollama did not return a response.");
     }
-
-    private sealed record OllamaGenerateRequest(
-        [property: JsonPropertyName("model")] string Model,
-        [property: JsonPropertyName("prompt")] string Prompt,
-        [property: JsonPropertyName("stream")] bool Stream);
-
-    private sealed record OllamaGenerateResponse(
-        [property: JsonPropertyName("response")] string? Response);
 }

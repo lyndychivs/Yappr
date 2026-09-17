@@ -21,4 +21,6 @@ public sealed class OllamaOptions
     /// the OOM killer on constrained hosts.
     /// </summary>
     public string Model { get; set; } = DefaultModel;
+
+    public McpResilienceOptions Resilience { get; set; } = new();
 }

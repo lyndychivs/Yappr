@@ -12,29 +12,29 @@ using NetCord.Services.ApplicationCommands;
 
 using Yappr.Models;
 
-[SlashCommand("tldr", "Summarise recent channel activity")]
+[SlashCommand("tldr", "Summarise recent channel yap")]
 public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, TldrOrchestrator orchestrator)
     : ApplicationCommandModule<ApplicationCommandContext>
 {
-    [SubSlashCommand("days", "Summarise the last N days of this channel")]
+    [SubSlashCommand("days", "Summarise the last N days of yap")]
     public Task DaysAsync(
-        [SlashCommandParameter(Name = "count", Description = "Number of days to summarise", MinValue = 1)]
+        [SlashCommandParameter(Name = "count", Description = "Number of days", MinValue = 1)]
         int count)
     {
         return RunAsync(TldrWindowKind.Days, count);
     }
 
-    [SubSlashCommand("hours", "Summarise the last N hours of this channel")]
+    [SubSlashCommand("hours", "Summarise the last N hours of this yap")]
     public Task HoursAsync(
-        [SlashCommandParameter(Name = "count", Description = "Number of hours to summarise", MinValue = 1)]
+        [SlashCommandParameter(Name = "count", Description = "Number of hours", MinValue = 1)]
         int count)
     {
         return RunAsync(TldrWindowKind.Hours, count);
     }
 
-    [SubSlashCommand("messages", "Summarise the last N messages of this channel")]
+    [SubSlashCommand("messages", "Summarise the last N messages of this yap")]
     public Task MessagesAsync(
-        [SlashCommandParameter(Name = "count", Description = "Number of messages to summarise", MinValue = 1)]
+        [SlashCommandParameter(Name = "count", Description = "Number of messages", MinValue = 1)]
         int count)
     {
         return RunAsync(TldrWindowKind.Messages, count);
@@ -67,8 +67,6 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
     {
         LogReceivedInteraction(logger, kind, count, Context.User.Username, Context.User.Id);
 
-        // Summarisation can take well over Discord's 3-second interaction response window (model load +
-        // generation), so acknowledge immediately and edit the response once the summary is ready.
         await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
         {
             Content = "<a:yap:1549927339935269026> sniffing out the yap...",
@@ -88,7 +86,7 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         catch (Exception exception)
         {
             LogSummarisationFailed(logger, exception, kind, count, Context.User.Username, Context.User.Id);
-            content = "⚠️ Something went wrong while summarising. Please try again.";
+            content = "⚠️ Something went wrong while sniffing the yap, Please try again.";
         }
 
         await ModifyResponseAsync(options => options.Content = content);

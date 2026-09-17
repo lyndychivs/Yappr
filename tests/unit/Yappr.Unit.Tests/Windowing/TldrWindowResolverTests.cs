@@ -10,7 +10,12 @@ using Yappr.Windowing;
 [TestFixture]
 public sealed class TldrWindowResolverTests
 {
-    private readonly TldrLimitsOptions limits = new() { MaxDays = 30, MaxHours = 720, MaxMessages = 500 };
+    private readonly TldrLimitsOptions limits = new()
+    {
+        MaxDays = 30,
+        MaxHours = 720,
+        MaxMessages = 500,
+    };
 
     [TestCase(0)]
     [TestCase(-1)]

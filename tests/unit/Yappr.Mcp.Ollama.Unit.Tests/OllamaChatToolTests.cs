@@ -88,20 +88,4 @@ public sealed class OllamaChatToolTests
 
         return new OllamaChatTool(new StubHttpClientFactory(httpClient), options);
     }
-
-    private sealed class StubHttpMessageHandler(Func<HttpRequestMessage, Task<HttpResponseMessage>> responder) : HttpMessageHandler
-    {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            return responder(request);
-        }
-    }
-
-    private sealed class StubHttpClientFactory(HttpClient httpClient) : IHttpClientFactory
-    {
-        public HttpClient CreateClient(string name)
-        {
-            return httpClient;
-        }
-    }
 }
