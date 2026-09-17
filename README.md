@@ -6,7 +6,7 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Flyndychivs%2FYappr%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/lyndychivs/Yappr/main)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lyndychivs/Yappr)
 
-A Discord bot with one job: `/tldr`. It summarizes a channel's recent activity into a short, skimmable TL;DR.
+A Discord bot for one job, `/tldr`. Summarising a channel's recent activity into a short, skimmable TL;DR.
 
 Yapping, summarized.
 
@@ -21,18 +21,15 @@ Yapping, summarized.
 | `src/Yappr.ServiceDefaults` | OpenTelemetry/health-check wiring, shared with the AppHost |
 | `src/Yappr.AppHost` | .NET Aspire orchestrator for local dev (bot + Aspire dashboard) |
 
-## Testing
-
-| Test type | Command | What it covers |
-| --- | --- | --- |
-| Unit | `make test` | Window resolution, prompt building, summarizer logic (mocked MCP client) |
-| Unit (Discord) | `make test` | `/tldr` command surface (subcommand names/attributes) |
-| Unit (`Yappr.Mcp.Ollama`) | `make test` | `OllamaChatTool`'s request/response handling against a fake Ollama backend |
-| Integration | `make test` | `McpClientToolInvoker` against a real MCP server (`Yappr.McpTestServer`) over stdio |
-| Integration (`Yappr.Mcp.Ollama`) | `make test` | The real `Yappr.Mcp.Ollama` host over HTTP, with Ollama itself stubbed |
-| Functional (manual) | see Quick Start | Real `/tldr` round trip through `mcp` + a real Ollama model, run locally against `make compose` |
-
 ## Make
+
+### Quick Start
+
+```
+cp .env.template .env
+# update .env
+make compose
+```
 
 Run `make help` to list all targets. Common ones:
 
@@ -44,25 +41,3 @@ make pull-model # re-pull the configured Ollama model, e.g. after `make stop-vol
 make stop       # stop containers
 make mutate     # Stryker mutation testing
 ```
-
-## Quick Start
-
-```
-cp .env.template .env
-# fill in DISCORD_TOKEN, DISCORD_PUBLIC_KEY, and OLLAMA_MODEL in .env
-make compose
-```
-
-`make compose` pulls `OLLAMA_MODEL` into the `ollama` container automatically after starting it up. The pull is idempotent and the model is cached in a named volume, so it only re-downloads after `make stop-volumes`/`docker compose down --volumes` clears that cache — run `make pull-model` again in that case.
-
-## Configuration
-
-| Variable | Purpose |
-| --- | --- |
-| `DISCORD_TOKEN` / `DISCORD_PUBLIC_KEY` | Discord bot credentials |
-| `MCP_TRANSPORT` | `Stdio` or `Http` (defaults to `Http`, pointed at `mcp`) |
-| `MCP_COMMAND` / `MCP_ARGUMENTS` | Command to launch the MCP server (stdio transport only) |
-| `MCP_HTTP_ENDPOINT` | URL of the MCP server (http transport); pre-wired to `mcp` in compose |
-| `MCP_TOOL_NAME` | Name of the MCP tool to invoke for summarization |
-| `OLLAMA_MODEL` | Local model `mcp` asks Ollama to run (pulled automatically by `make compose`, see Quick Start). Size to available RAM — larger models can be OOM-killed on constrained hosts |
-| `TLDR_MAX_DAYS` / `TLDR_MAX_HOURS` / `TLDR_MAX_MESSAGES` | Caps enforced on `/tldr` requests |
