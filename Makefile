@@ -1,7 +1,9 @@
-.PHONY: help build build-discord build-mcp build-all clean test mutate compose stop stop-volumes token
+.PHONY: help build build-discord build-mcp build-all clean test mutate compose pull-model stop stop-volumes token
 
 # Variables
 COMPOSE_FILE = deploy/docker-compose.yaml
+include .env
+export
 
 help: ## Show this help message
 	@echo "Available targets:"
@@ -33,6 +35,10 @@ mutate: ## Run Stryker Mutation Testing
 # Docker
 compose: ## Composes Yappr Docker images
 	docker compose --file $(COMPOSE_FILE) --env-file .env up --detach --build
+	$(MAKE) pull-model
+
+pull-model: ## Pulls the Ollama model configured in .env (idempotent; re-run after `stop-volumes` clears the cache)
+	docker compose --file $(COMPOSE_FILE) --env-file .env exec ollama ollama pull $(OLLAMA_MODEL)
 
 stop: ## Stops Yappr Docker images
 	docker compose --file $(COMPOSE_FILE) --env-file .env down

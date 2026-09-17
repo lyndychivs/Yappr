@@ -39,7 +39,8 @@ Run `make help` to list all targets. Common ones:
 ```
 make build      # dotnet build (Release)
 make test       # unit + integration tests
-make compose    # build and start the bot via docker compose
+make compose    # build and start the bot via docker compose (also pulls the configured Ollama model)
+make pull-model # re-pull the configured Ollama model, e.g. after `make stop-volumes` clears its cache
 make stop       # stop containers
 make mutate     # Stryker mutation testing
 ```
@@ -50,9 +51,9 @@ make mutate     # Stryker mutation testing
 cp .env.template .env
 # fill in DISCORD_TOKEN, DISCORD_PUBLIC_KEY, and OLLAMA_MODEL in .env
 make compose
-# one-time: pull the configured model into the ollama container
-docker compose -f deploy/docker-compose.yaml exec ollama ollama pull llama3.2:3b
 ```
+
+`make compose` pulls `OLLAMA_MODEL` into the `ollama` container automatically after starting it up. The pull is idempotent and the model is cached in a named volume, so it only re-downloads after `make stop-volumes`/`docker compose down --volumes` clears that cache — run `make pull-model` again in that case.
 
 ## Configuration
 
@@ -63,5 +64,5 @@ docker compose -f deploy/docker-compose.yaml exec ollama ollama pull llama3.2:3b
 | `MCP_COMMAND` / `MCP_ARGUMENTS` | Command to launch the MCP server (stdio transport only) |
 | `MCP_HTTP_ENDPOINT` | URL of the MCP server (http transport); pre-wired to `mcp` in compose |
 | `MCP_TOOL_NAME` | Name of the MCP tool to invoke for summarization |
-| `OLLAMA_MODEL` | Local model `mcp` asks Ollama to run (must be pulled once, see Quick Start). Size to available RAM — larger models can be OOM-killed on constrained hosts |
+| `OLLAMA_MODEL` | Local model `mcp` asks Ollama to run (pulled automatically by `make compose`, see Quick Start). Size to available RAM — larger models can be OOM-killed on constrained hosts |
 | `TLDR_MAX_DAYS` / `TLDR_MAX_HOURS` / `TLDR_MAX_MESSAGES` | Caps enforced on `/tldr` requests |
