@@ -61,7 +61,7 @@ public sealed class TldrPromptBuilderTests
         Assert.That(
             prompt,
             Does.StartWith(
-                "Summarize the following Discord channel conversation into a short, skimmable TL;DR. " +
+                "Summarise the following Discord channel conversation into a short, skimmable TL;DR. " +
                 "Group related messages by topic, call out decisions or action items, and ignore small talk. " +
                 "Reply in plain text suitable for a Discord message." +
                 "\n\n---\n"));

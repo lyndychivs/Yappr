@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using Yappr.Models;
 using Yappr.Summarization.Mcp;
 
-public sealed class McpSummarizer(IMcpToolInvoker toolInvoker) : ISummarizer
+public sealed class McpSummariser(IMcpToolInvoker toolInvoker) : ISummariser
 {
-    public async Task<SummaryResult> SummarizeAsync(IReadOnlyList<ChannelMessage> messages, CancellationToken cancellationToken)
+    public async Task<SummaryResult> SummariseAsync(IReadOnlyList<ChannelMessage> messages, CancellationToken cancellationToken)
     {
         string prompt = TldrPromptBuilder.Build(messages);
         string summary = await toolInvoker.InvokeAsync(prompt, cancellationToken);

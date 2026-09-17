@@ -46,7 +46,7 @@ internal static class Program
 
         builder.Services.AddScoped<IMessageFetcher, NetCordMessageFetcher>();
         builder.Services.AddScoped<IMcpToolInvoker, McpClientToolInvoker>();
-        builder.Services.AddScoped<ISummarizer, McpSummarizer>();
+        builder.Services.AddScoped<ISummariser, McpSummariser>();
         builder.Services.AddScoped<TldrOrchestrator>();
 
         IHost host = builder.Build();

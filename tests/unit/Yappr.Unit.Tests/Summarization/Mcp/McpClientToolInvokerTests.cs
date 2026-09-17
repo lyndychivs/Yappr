@@ -88,12 +88,12 @@ public sealed class McpClientToolInvokerTests
     [Test]
     public void BuildArguments_ReturnsSinglePromptEntryUnderOrdinalPromptKey()
     {
-        IReadOnlyDictionary<string, object?> arguments = McpClientToolInvoker.BuildArguments("summarize this");
+        IReadOnlyDictionary<string, object?> arguments = McpClientToolInvoker.BuildArguments("summarise this");
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(arguments, Has.Count.EqualTo(1));
-            Assert.That(arguments["prompt"], Is.EqualTo("summarize this"));
+            Assert.That(arguments["prompt"], Is.EqualTo("summarise this"));
             Assert.That(arguments.ContainsKey("PROMPT"), Is.False, "the key comparer must be ordinal (case-sensitive), not case-insensitive");
         }
     }

@@ -49,7 +49,7 @@ public sealed class OllamaChatToolTests
 
             await using McpClient client = await McpClient.CreateAsync(transport, cancellationToken: CancellationToken.None);
 
-            var arguments = new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = "summarize this" };
+            var arguments = new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = "summarise this" };
             CallToolResult result = await client.CallToolAsync("chat", arguments, cancellationToken: CancellationToken.None);
 
             TextContentBlock? textBlock = result.Content.OfType<TextContentBlock>().FirstOrDefault();

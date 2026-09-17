@@ -32,7 +32,7 @@ public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOption
     private readonly OllamaOptions options = options.Value;
 
     [McpServerTool(Name = "chat")]
-    [Description("Summarizes the given prompt using the configured local Ollama model.")]
+    [Description("Summarises the given prompt using the configured local Ollama model.")]
     public async Task<string> Chat(string prompt, CancellationToken cancellationToken)
     {
         var request = new OllamaGenerateRequest(options.Model, prompt, Stream: false);

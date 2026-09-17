@@ -34,14 +34,14 @@ public sealed class OllamaChatToolTests
 
         OllamaChatTool tool = CreateTool(handler, model: "llama3.1:8b", endpoint: "http://ollama:11434");
 
-        string result = await tool.Chat("summarize this", CancellationToken.None);
+        string result = await tool.Chat("summarise this", CancellationToken.None);
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Is.EqualTo("a short summary"));
             Assert.That(capturedRequest!.RequestUri!.AbsolutePath, Is.EqualTo("/api/generate"));
             Assert.That(capturedBody, Does.Contain("\"model\":\"llama3.1:8b\""));
-            Assert.That(capturedBody, Does.Contain("\"prompt\":\"summarize this\""));
+            Assert.That(capturedBody, Does.Contain("\"prompt\":\"summarise this\""));
             Assert.That(capturedBody, Does.Contain("\"stream\":false"));
         }
     }

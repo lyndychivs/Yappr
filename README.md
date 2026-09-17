@@ -9,13 +9,13 @@
 
 A Discord bot for one job, `/tldr`. Summarising a channel's recent activity into a short, skimmable TL;DR.
 
-Yapping, summarized.
+Yapping, summarised.
 
 ## Projects
 
 | Project | Purpose |
 | --- | --- |
-| `src/Yappr` | Core logic: window resolution, prompt building, summarizer orchestration |
+| `src/Yappr` | Core logic: window resolution, prompt building, summariser orchestration |
 | `src/Yappr.Models` | Shared DTOs and options types |
 | `src/Yappr.Discord` | The bot host — NetCord gateway client, `/tldr` and `/help` slash commands |
 | `src/Yappr.Mcp.Ollama` | MCP server exposing a `chat` tool backed by a local Ollama model |

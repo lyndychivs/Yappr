@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Yappr.Models;
 
-public interface ISummarizer
+public interface ISummariser
 {
-    Task<SummaryResult> SummarizeAsync(IReadOnlyList<ChannelMessage> messages, CancellationToken cancellationToken);
+    Task<SummaryResult> SummariseAsync(IReadOnlyList<ChannelMessage> messages, CancellationToken cancellationToken);
 }
