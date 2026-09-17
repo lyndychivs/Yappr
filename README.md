@@ -9,36 +9,15 @@
 
 A Discord bot for one job, `/tldr`. Summarising a channel's recent activity into a short, skimmable TL;DR.
 
-Yapping, summarized.
+Yapping, summarised.
 
 ## Projects
 
 | Project | Purpose |
 | --- | --- |
-| `src/Yappr` | Core logic: window resolution, prompt building, summarizer orchestration |
+| `src/Yappr` | Core logic: window resolution, prompt building, summariser orchestration |
 | `src/Yappr.Models` | Shared DTOs and options types |
 | `src/Yappr.Discord` | The bot host — NetCord gateway client, `/tldr` and `/help` slash commands |
 | `src/Yappr.Mcp.Ollama` | MCP server exposing a `chat` tool backed by a local Ollama model |
 | `src/Yappr.ServiceDefaults` | OpenTelemetry/health-check wiring, shared with the AppHost |
 | `src/Yappr.AppHost` | .NET Aspire orchestrator for local dev (bot + Aspire dashboard) |
-
-## Make
-
-### Quick Start
-
-```
-cp .env.template .env
-# update .env
-make compose
-```
-
-Run `make help` to list all targets. Common ones:
-
-```
-make build      # dotnet build (Release)
-make test       # unit + integration tests
-make compose    # build and start the bot via docker compose (also pulls the configured Ollama model)
-make pull-model # re-pull the configured Ollama model, e.g. after `make stop-volumes` clears its cache
-make stop       # stop containers
-make mutate     # Stryker mutation testing
-```

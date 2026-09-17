@@ -1,6 +1,5 @@
 namespace Yappr.Integration.Tests;
 
-using System.Net.Http;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,10 +37,5 @@ public sealed class McpClientToolInvokerTests
         string result = await invoker.InvokeAsync("hello from the integration test", CancellationToken.None);
 
         Assert.That(result, Is.EqualTo("ECHO: hello from the integration test"));
-    }
-
-    private sealed class StubHttpClientFactory : IHttpClientFactory
-    {
-        public HttpClient CreateClient(string name) => new();
     }
 }

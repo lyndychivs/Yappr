@@ -7,7 +7,7 @@ using System.Text;
 using Yappr.Models;
 
 /// <summary>
-/// Renders a channel transcript into the prompt sent to the summarization tool. Truncates from the oldest
+/// Renders a channel transcript into the prompt sent to the summarisation tool. Truncates from the oldest
 /// end when the transcript would otherwise blow past a reasonable MCP prompt size.
 /// </summary>
 public static class TldrPromptBuilder
@@ -24,7 +24,7 @@ public static class TldrPromptBuilder
 
         string transcript = BuildWithinBudget(lines);
 
-        return "Summarize the following Discord channel conversation into a short, skimmable TL;DR. " +
+        return "Summarise the following Discord channel conversation into a short, skimmable TL;DR. " +
             "Group related messages by topic, call out decisions or action items, and ignore small talk. " +
             "Reply in plain text suitable for a Discord message." +
             "\n\n---\n" +
@@ -44,7 +44,6 @@ public static class TldrPromptBuilder
 
         if (totalLength > MaxPromptCharacters)
         {
-            // Drop oldest lines first, keeping the most recent conversation within budget.
             int runningLength = 0;
             for (int i = lines.Count - 1; i >= 0; i--)
             {

@@ -14,10 +14,10 @@ using Yappr.Summarization;
 using Yappr.Summarization.Mcp;
 
 [TestFixture]
-public sealed class McpSummarizerTests
+public sealed class McpSummariserTests
 {
     [Test]
-    public async Task SummarizeAsync_ReturnsTrimmedSummaryAndMessageCount()
+    public async Task SummariseAsync_ReturnsTrimmedSummaryAndMessageCount()
     {
         var messages = new List<ChannelMessage>
         {
@@ -30,9 +30,9 @@ public sealed class McpSummarizerTests
             .Setup(t => t.InvokeAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync("  A short summary.  ");
 
-        var summarizer = new McpSummarizer(toolInvoker.Object);
+        var summariser = new McpSummariser(toolInvoker.Object);
 
-        SummaryResult result = await summarizer.SummarizeAsync(messages, CancellationToken.None);
+        SummaryResult result = await summariser.SummariseAsync(messages, CancellationToken.None);
 
         using (Assert.EnterMultipleScope())
         {
@@ -42,7 +42,7 @@ public sealed class McpSummarizerTests
     }
 
     [Test]
-    public async Task SummarizeAsync_PassesBuiltPromptToToolInvoker()
+    public async Task SummariseAsync_PassesBuiltPromptToToolInvoker()
     {
         var messages = new List<ChannelMessage> { new("Alice", "Unique message content", DateTimeOffset.UtcNow) };
 
@@ -53,9 +53,9 @@ public sealed class McpSummarizerTests
             .Callback<string, CancellationToken>((prompt, _) => capturedPrompt = prompt)
             .ReturnsAsync("summary");
 
-        var summarizer = new McpSummarizer(toolInvoker.Object);
+        var summariser = new McpSummariser(toolInvoker.Object);
 
-        await summarizer.SummarizeAsync(messages, CancellationToken.None);
+        await summariser.SummariseAsync(messages, CancellationToken.None);
 
         Assert.That(capturedPrompt, Does.Contain("Unique message content"));
     }

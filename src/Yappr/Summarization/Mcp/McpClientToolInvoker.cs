@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Http;
 using Microsoft.Extensions.Options;
 
 using ModelContextProtocol.Client;
@@ -33,7 +32,7 @@ public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, I
 
         await using McpClient client = await McpClient.CreateAsync(transport, cancellationToken: cancellationToken);
 
-        var arguments = new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = prompt };
+        IReadOnlyDictionary<string, object?> arguments = BuildArguments(prompt);
 
         CallToolResult result = await client.CallToolAsync(
             options.ToolName,
@@ -47,24 +46,32 @@ public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, I
             : textBlock.Text;
     }
 
-    internal IClientTransport CreateTransport() => options.Transport switch
+    internal static IReadOnlyDictionary<string, object?> BuildArguments(string prompt)
     {
-        McpTransportType.Stdio => new StdioClientTransport(new StdioClientTransportOptions
+        return new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = prompt };
+    }
+
+    internal IClientTransport CreateTransport()
+    {
+        return options.Transport switch
         {
-            Name = "Yappr",
-            Command = options.Command ?? throw new InvalidOperationException("Mcp:Command must be configured for the Stdio transport."),
-            Arguments = options.Arguments,
-        }),
-
-        McpTransportType.Http => new HttpClientTransport(
-            new HttpClientTransportOptions
+            McpTransportType.Stdio => new StdioClientTransport(new StdioClientTransportOptions
             {
-                Endpoint = new Uri(options.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
-            },
-            httpClientFactory.CreateClient(HttpClientName),
-            loggerFactory: null,
-            ownsHttpClient: true),
+                Name = "Yappr",
+                Command = options.Command ?? throw new InvalidOperationException("Mcp:Command must be configured for the Stdio transport."),
+                Arguments = options.Arguments,
+            }),
 
-        _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{options.Transport}'."),
-    };
+            McpTransportType.Http => new HttpClientTransport(
+                new HttpClientTransportOptions
+                {
+                    Endpoint = new Uri(options.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
+                },
+                httpClientFactory.CreateClient(HttpClientName),
+                loggerFactory: null,
+                ownsHttpClient: true),
+
+            _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{options.Transport}'."),
+        };
+    }
 }

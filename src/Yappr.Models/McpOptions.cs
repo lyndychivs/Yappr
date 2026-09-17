@@ -27,4 +27,6 @@ public sealed class McpOptions
     /// touching bot code.
     /// </summary>
     public string ToolName { get; set; } = "chat";
+
+    public McpResilienceOptions Resilience { get; set; } = new();
 }

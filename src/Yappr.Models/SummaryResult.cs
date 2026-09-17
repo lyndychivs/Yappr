@@ -1,3 +1,5 @@
 namespace Yappr.Models;
 
-public sealed record SummaryResult(string Summary, int MessageCount);
+public sealed record SummaryResult(
+    string Summary,
+    int MessageCount);

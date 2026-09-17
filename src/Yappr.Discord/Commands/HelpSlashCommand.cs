@@ -11,10 +11,10 @@ public sealed partial class HelpSlashCommand(ILogger<HelpSlashCommand> logger) :
     {
         LogReceivedInteraction(logger, Context.Interaction.Data.Name, Context.User.Username, Context.User.Id);
 
-        return "# 🗣️ Yappr — `/tldr` parameters\n" +
-            "**`/tldr days count:<n>`** — summarize the last `n` days of this channel\n" +
-            "**`/tldr hours count:<n>`** — summarize the last `n` hours of this channel\n" +
-            "**`/tldr messages count:<n>`** — summarize the last `n` messages of this channel";
+        return "# <a:yap:1549927339935269026> Yappr `/tldr` parameters\n" +
+            "**`/tldr days count:<n>`** : summarise the last `n` days of this yap\n" +
+            "**`/tldr hours count:<n>`** : summarise the last `n` hours of this yap\n" +
+            "**`/tldr messages count:<n>`** : summarise the last `n` messages of this yap";
     }
 
     [LoggerMessage(

@@ -17,7 +17,13 @@ public sealed record TldrOutcome
 
     public SummaryResult? Result { get; }
 
-    public static TldrOutcome Success(SummaryResult result) => new(isSuccess: true, error: null, result);
+    public static TldrOutcome Success(SummaryResult result)
+    {
+        return new(isSuccess: true, error: null, result);
+    }
 
-    public static TldrOutcome Failure(string error) => new(isSuccess: false, error, result: null);
+    public static TldrOutcome Failure(string error)
+    {
+        return new(isSuccess: false, error, result: null);
+    }
 }
