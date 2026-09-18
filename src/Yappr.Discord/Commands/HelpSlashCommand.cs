@@ -4,8 +4,16 @@ using Microsoft.Extensions.Logging;
 
 using NetCord.Services.ApplicationCommands;
 
+/// <summary>
+/// The `/help` slash command.
+/// </summary>
+/// <param name="logger">The logger to record received interactions with.</param>
 public sealed partial class HelpSlashCommand(ILogger<HelpSlashCommand> logger) : ApplicationCommandModule<ApplicationCommandContext>
 {
+    /// <summary>
+    /// Returns the `/tldr` usage help text.
+    /// </summary>
+    /// <returns>The help message to reply with.</returns>
     [SlashCommand("help", "Help with Yappr")]
     public string GetHelp()
     {

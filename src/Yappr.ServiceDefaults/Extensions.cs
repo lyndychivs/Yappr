@@ -11,8 +11,18 @@ using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
+/// <summary>
+/// Shared host configuration (telemetry, health checks, service discovery, resilience) for Yappr's services.
+/// </summary>
 public static class Extensions
 {
+    /// <summary>
+    /// Adds OpenTelemetry, health checks, service discovery, and a standard resilience handler to
+    /// <paramref name="builder"/>.
+    /// </summary>
+    /// <typeparam name="TBuilder">The host builder type.</typeparam>
+    /// <param name="builder">The host builder to configure.</param>
+    /// <returns>The same builder, for chaining.</returns>
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder)
         where TBuilder : IHostApplicationBuilder
     {
@@ -31,6 +41,11 @@ public static class Extensions
         return builder;
     }
 
+    /// <summary>
+    /// Maps the standard <c>/health</c> and <c>/alive</c> health check endpoints.
+    /// </summary>
+    /// <param name="app">The application to map the endpoints on.</param>
+    /// <returns>The same application, for chaining.</returns>
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         app.MapHealthChecks("/health");

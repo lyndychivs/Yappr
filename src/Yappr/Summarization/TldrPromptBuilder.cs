@@ -7,13 +7,21 @@ using System.Text;
 using Yappr.Models;
 
 /// <summary>
-/// Renders a channel transcript into the prompt sent to the summarisation tool. Truncates from the oldest
-/// end when the transcript would otherwise blow past a reasonable MCP prompt size.
+/// Renders a channel transcript into the summarization prompt, truncating the oldest messages if it would
+/// exceed a reasonable size.
 /// </summary>
 public static class TldrPromptBuilder
 {
+    /// <summary>
+    /// The maximum length, in characters, of the transcript portion of the prompt.
+    /// </summary>
     public const int MaxPromptCharacters = 12_000;
 
+    /// <summary>
+    /// Builds the summarization prompt for <paramref name="messages"/>.
+    /// </summary>
+    /// <param name="messages">The channel transcript, oldest first.</param>
+    /// <returns>The prompt to send to the summarization tool.</returns>
     public static string Build(IReadOnlyList<ChannelMessage> messages)
     {
         var lines = new List<string>(messages.Count);

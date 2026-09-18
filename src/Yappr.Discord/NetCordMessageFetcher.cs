@@ -14,11 +14,12 @@ using Yappr.Summarization;
 using Yappr.Windowing;
 
 /// <summary>
-/// Fetches channel history from Discord via NetCord's REST API, walking backwards from the most recent
-/// message until either the requested message count or the time cutoff is satisfied.
+/// Fetches channel history from Discord, walking backwards from the newest message until the count or time
+/// cutoff is met.
 /// </summary>
 public sealed class NetCordMessageFetcher(GatewayClient gatewayClient) : IMessageFetcher
 {
+    /// <inheritdoc/>
     public async Task<IReadOnlyList<ChannelMessage>> FetchAsync(ulong channelId, TldrWindowResolution window, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(window);
