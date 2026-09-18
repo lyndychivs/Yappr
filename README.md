@@ -7,17 +7,17 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Flyndychivs%2FYappr%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/lyndychivs/Yappr/main)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/lyndychivs/Yappr)
 
-A Discord bot for one job, `/tldr`. Summarising a channel's recent activity into a short, skimmable TL;DR.
+A Discord bot for one job, `/tldr`. Summarising a channel's recent activity (yap) into a short, skimmable TL;DR.
 
 Yapping, summarised.
 
-## Projects
+## Project
 
 | Project | Purpose |
 | --- | --- |
-| `src/Yappr` | Core logic: window resolution, prompt building, summariser orchestration |
-| `src/Yappr.Models` | Shared DTOs and options types |
-| `src/Yappr.Discord` | The bot host — NetCord gateway client, `/tldr` and `/help` slash commands |
-| `src/Yappr.Mcp.Ollama` | MCP server exposing a `chat` tool backed by a local Ollama model |
-| `src/Yappr.ServiceDefaults` | OpenTelemetry/health-check wiring, shared with the AppHost |
-| `src/Yappr.AppHost` | .NET Aspire orchestrator for local dev (bot + Aspire dashboard) |
+| `src/Yappr` | Core logic |
+| `src/Yappr.Models` | Shared DTOs |
+| `src/Yappr.Discord` | The bot host |
+| `src/Yappr.Mcp.Ollama` | MCP server |
+| `src/Yappr.ServiceDefaults` | OpenTelemetry/health-check wiring |
+| `src/Yappr.AppHost` | .NET Aspire orchestrator |
