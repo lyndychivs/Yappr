@@ -12,10 +12,20 @@ using NetCord.Services.ApplicationCommands;
 
 using Yappr.Models;
 
+/// <summary>
+/// The `/tldr` slash command and its `days`/`hours`/`messages` subcommands.
+/// </summary>
+/// <param name="logger">The logger to record received interactions and failures with.</param>
+/// <param name="orchestrator">Runs the `/tldr` request.</param>
 [SlashCommand("tldr", "Summarise recent channel yap")]
 public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, TldrOrchestrator orchestrator)
     : ApplicationCommandModule<ApplicationCommandContext>
 {
+    /// <summary>
+    /// Summarises the last <paramref name="count"/> days of the channel.
+    /// </summary>
+    /// <param name="count">The number of days to summarize.</param>
+    /// <returns>A task that completes when the response has been sent.</returns>
     [SubSlashCommand("days", "Summarise the last N days of yap")]
     public Task DaysAsync(
         [SlashCommandParameter(Name = "count", Description = "Number of days", MinValue = 1)]
@@ -24,6 +34,11 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         return RunAsync(TldrWindowKind.Days, count);
     }
 
+    /// <summary>
+    /// Summarises the last <paramref name="count"/> hours of the channel.
+    /// </summary>
+    /// <param name="count">The number of hours to summarize.</param>
+    /// <returns>A task that completes when the response has been sent.</returns>
     [SubSlashCommand("hours", "Summarise the last N hours of this yap")]
     public Task HoursAsync(
         [SlashCommandParameter(Name = "count", Description = "Number of hours", MinValue = 1)]
@@ -32,6 +47,11 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         return RunAsync(TldrWindowKind.Hours, count);
     }
 
+    /// <summary>
+    /// Summarises the last <paramref name="count"/> messages of the channel.
+    /// </summary>
+    /// <param name="count">The number of messages to summarize.</param>
+    /// <returns>A task that completes when the response has been sent.</returns>
     [SubSlashCommand("messages", "Summarise the last N messages of this yap")]
     public Task MessagesAsync(
         [SlashCommandParameter(Name = "count", Description = "Number of messages", MinValue = 1)]

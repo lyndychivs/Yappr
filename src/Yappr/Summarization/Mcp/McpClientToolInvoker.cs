@@ -15,17 +15,18 @@ using ModelContextProtocol.Protocol;
 using Yappr.Models;
 
 /// <summary>
-/// Connects to the configured MCP server (a "chatgpt" MCP server for now — swappable via configuration, or by
-/// replacing this class with a direct-API <see cref="IMcpToolInvoker"/> implementation later) and invokes its
-/// summarization tool. A new client connection is opened per call, which is simple and appropriate for the
-/// low request volume of a Discord slash command.
+/// Invokes the configured MCP server's summarization tool, opening a new client connection per call.
 /// </summary>
 public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, IOptions<McpOptions> options) : IMcpToolInvoker
 {
+    /// <summary>
+    /// The name of the named <see cref="HttpClient"/> used for the http transport.
+    /// </summary>
     public const string HttpClientName = nameof(McpClientToolInvoker);
 
     private readonly McpOptions options = options.Value;
 
+    /// <inheritdoc/>
     public async Task<string> InvokeAsync(string prompt, CancellationToken cancellationToken)
     {
         IClientTransport transport = CreateTransport();
@@ -46,11 +47,20 @@ public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, I
             : textBlock.Text;
     }
 
+    /// <summary>
+    /// Builds the MCP tool call arguments for <paramref name="prompt"/>.
+    /// </summary>
+    /// <param name="prompt">The prompt to send to the tool.</param>
+    /// <returns>The tool call arguments.</returns>
     internal static IReadOnlyDictionary<string, object?> BuildArguments(string prompt)
     {
         return new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = prompt };
     }
 
+    /// <summary>
+    /// Creates the client transport for the configured <see cref="McpOptions.Transport"/>.
+    /// </summary>
+    /// <returns>The client transport to connect with.</returns>
     internal IClientTransport CreateTransport()
     {
         return options.Transport switch

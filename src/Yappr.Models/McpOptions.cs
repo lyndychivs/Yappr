@@ -1,9 +1,18 @@
 namespace Yappr.Models;
 
+/// <summary>
+/// Configures the MCP server used for summarization.
+/// </summary>
 public sealed class McpOptions
 {
+    /// <summary>
+    /// The configuration section name this class binds to.
+    /// </summary>
     public const string SectionName = "Mcp";
 
+    /// <summary>
+    /// Gets or sets the transport used to reach the MCP server.
+    /// </summary>
     public McpTransportType Transport { get; set; } = McpTransportType.Stdio;
 
     /// <summary>
@@ -22,11 +31,12 @@ public sealed class McpOptions
     public string? HttpEndpoint { get; set; }
 
     /// <summary>
-    /// Gets or sets the name of the MCP tool to invoke for summarization (e.g. a "chat" or "complete" tool
-    /// exposed by the configured server). Kept configurable so the underlying LLM provider can change without
-    /// touching bot code.
+    /// Gets or sets the MCP tool to invoke for summarization.
     /// </summary>
     public string ToolName { get; set; } = "chat";
 
+    /// <summary>
+    /// Gets or sets the HTTP resilience settings for the MCP client.
+    /// </summary>
     public McpResilienceOptions Resilience { get; set; } = new();
 }

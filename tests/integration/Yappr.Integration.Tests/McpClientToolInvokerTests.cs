@@ -13,8 +13,7 @@ using Yappr.Summarization.Mcp;
 
 /// <summary>
 /// Exercises <see cref="McpClientToolInvoker"/> against a real MCP server (<c>Yappr.McpTestServer</c>) over
-/// stdio, so the actual ModelContextProtocol SDK wiring — not just a mocked interface — is verified. The test
-/// server exposes a deterministic "chat" tool, standing in for a real "chatgpt" MCP server.
+/// stdio.
 /// </summary>
 [TestFixture]
 public sealed class McpClientToolInvokerTests

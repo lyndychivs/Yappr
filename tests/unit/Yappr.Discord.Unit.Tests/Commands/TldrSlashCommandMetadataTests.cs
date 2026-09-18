@@ -9,8 +9,8 @@ using NUnit.Framework;
 using Yappr.Discord.Commands;
 
 /// <summary>
-/// NetCord builds slash command registration from attributes at startup, so a typo or accidental removal
-/// wouldn't fail a normal compile — these tests pin the public command surface exposed to Discord users.
+/// Pins the `/tldr` slash command's public metadata, since NetCord builds registration from attributes and a
+/// typo wouldn't fail compilation.
 /// </summary>
 [TestFixture]
 public sealed class TldrSlashCommandMetadataTests

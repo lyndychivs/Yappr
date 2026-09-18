@@ -5,9 +5,8 @@ using System.ComponentModel;
 using ModelContextProtocol.Server;
 
 /// <summary>
-/// A deterministic stand-in for a real "chatgpt" MCP tool, used by <c>Yappr.Integration.Tests</c> to exercise
-/// <c>McpClientToolInvoker</c> against a real MCP server process over stdio, without depending on an external
-/// LLM provider being configured.
+/// Deterministic stand-in for a "chatgpt" MCP tool, used to exercise <c>McpClientToolInvoker</c> without an
+/// external LLM.
 /// </summary>
 [McpServerToolType]
 public sealed class EchoTools

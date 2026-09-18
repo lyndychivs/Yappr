@@ -6,11 +6,18 @@ using System.Globalization;
 using Yappr.Models;
 
 /// <summary>
-/// Turns a `/tldr` subcommand (days/hours/messages + a numeric value) into a validated window, enforcing the
-/// configured caps so a single request can't page through unbounded Discord history or blow the MCP prompt size.
+/// Turns a `/tldr` subcommand into a validated <see cref="TldrWindowResolution"/>.
 /// </summary>
-public static class TldrWindowResolver
+internal static class TldrWindowResolver
 {
+    /// <summary>
+    /// Validates a `/tldr` subcommand's numeric value against <paramref name="limits"/> and resolves it to a
+    /// window.
+    /// </summary>
+    /// <param name="kind">The kind of window requested (days, hours, or messages).</param>
+    /// <param name="value">The window's numeric value.</param>
+    /// <param name="limits">The configured caps to validate against.</param>
+    /// <returns>The resolved window, or a validation error if the value exceeded the configured cap.</returns>
     public static TldrWindowResolution Resolve(TldrWindowKind kind, int value, TldrLimitsOptions limits)
     {
         ArgumentNullException.ThrowIfNull(limits);

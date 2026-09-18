@@ -7,6 +7,9 @@ using Projects;
 
 using Yappr.Models;
 
+/// <summary>
+/// The Aspire app host: wires up the Ollama, MCP, and Discord services and their configuration.
+/// </summary>
 internal static class Program
 {
     private const string DiscordServiceName = "discord";
