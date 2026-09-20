@@ -13,7 +13,7 @@ Yapping, summarised.
 
 ## Project
 
-| Project | Purpose |
+| Project | Context |
 | --- | --- |
 | `src/Yappr` | Core logic |
 | `src/Yappr.Models` | Shared DTOs |
