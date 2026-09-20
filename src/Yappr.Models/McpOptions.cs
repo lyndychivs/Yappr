@@ -38,9 +38,15 @@ public sealed class McpOptions
     public string ToolName { get; set; } = "chat";
 
     /// <summary>
+    /// Gets or sets the timeout the MCP server applies to its own outbound calls (its <c>Ollama:Resilience</c>
+    /// settings). It must match the server; startup fails if <see cref="Resilience"/> does not exceed it.
+    /// </summary>
+    public TimeSpan ServerTimeout { get; set; } = McpResilienceOptions.ServerTimeout;
+
+    /// <summary>
     /// Gets or sets the HTTP resilience settings for the MCP client. Timeouts default to the MCP server's
     /// plus <see cref="McpResilienceOptions.ClientMargin"/>. If the timeouts are overridden in configuration,
-    /// keep the client's above <c>Ollama:Resilience</c> on the server; the two are configured independently.
+    /// keep them above <see cref="ServerTimeout"/>; startup validation fails otherwise.
     /// </summary>
     public McpResilienceOptions Resilience { get; set; } = new()
     {

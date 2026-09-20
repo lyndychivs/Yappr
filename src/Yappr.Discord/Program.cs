@@ -33,7 +33,8 @@ internal static class Program
 
         builder.AddServiceDefaults();
 
-        builder.Services.AddOptions<McpOptions>().BindConfiguration(McpOptions.SectionName);
+        builder.Services.AddOptions<McpOptions>().BindConfiguration(McpOptions.SectionName).ValidateOnStart();
+        builder.Services.AddSingleton<IValidateOptions<McpOptions>, McpOptionsValidator>();
         builder.Services.AddOptions<TldrLimitsOptions>().BindConfiguration(TldrLimitsOptions.SectionName);
 
         builder.Services

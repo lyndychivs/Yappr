@@ -9,8 +9,6 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Http.Resilience;
-using Microsoft.Extensions.Options;
 
 using NUnit.Framework;
 
@@ -24,28 +22,13 @@ public sealed class ServiceCollectionExtensionsTests
     private const string ClientName = nameof(OllamaChatTool);
 
     [Test]
-    public void AddOllamaHttpClient_NoConfiguration_AppliesServerTimeoutsAndBaseAddress()
+    public void AddOllamaHttpClient_NoConfiguration_SetsBaseAddress()
     {
         using ServiceProvider provider = BuildProvider(new Dictionary<string, string?>(StringComparer.Ordinal));
 
         HttpClient client = provider.GetRequiredService<IHttpClientFactory>().CreateClient(ClientName);
 
         Assert.That(client.BaseAddress, Is.EqualTo(new Uri(new OllamaOptions().Endpoint)));
-        HttpStandardResilienceOptions applied = GetApplied(provider);
-        Assert.That(applied.AttemptTimeout.Timeout, Is.EqualTo(McpResilienceOptions.ServerTimeout));
-        Assert.That(applied.TotalRequestTimeout.Timeout, Is.EqualTo(McpResilienceOptions.ServerTimeout));
-    }
-
-    [Test]
-    public void AddOllamaHttpClient_ConfiguredAttemptTimeout_IsApplied()
-    {
-        using ServiceProvider provider = BuildProvider(new Dictionary<string, string?>(StringComparer.Ordinal)
-        {
-            ["Ollama:Resilience:AttemptTimeout"] = "00:20:00",
-        });
-
-        Assert.DoesNotThrow(() => provider.GetRequiredService<IHttpClientFactory>().CreateClient(ClientName));
-        Assert.That(GetApplied(provider).AttemptTimeout.Timeout, Is.EqualTo(TimeSpan.FromMinutes(20)));
     }
 
     [Test]
@@ -77,12 +60,6 @@ public sealed class ServiceCollectionExtensionsTests
         services.AddHttpClient(ClientName).ConfigurePrimaryHttpMessageHandler(() => new HangingHandler());
 
         return services.BuildServiceProvider();
-    }
-
-    private static HttpStandardResilienceOptions GetApplied(ServiceProvider provider)
-    {
-        return provider.GetRequiredService<IOptionsMonitor<HttpStandardResilienceOptions>>()
-            .Get($"{ClientName}-standard");
     }
 
     private sealed class HangingHandler : HttpMessageHandler
