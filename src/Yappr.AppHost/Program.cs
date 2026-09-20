@@ -1,5 +1,8 @@
 namespace Yappr.AppHost;
 
+using System;
+using System.Globalization;
+
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 
@@ -15,6 +18,26 @@ internal static class Program
     private const string DiscordServiceName = "discord";
     private const string McpServiceName = "mcp";
     private const string OllamaServiceName = "ollama";
+
+    private static void ForwardTimeouts(
+        IDistributedApplicationBuilder builder,
+        IResourceBuilder<ProjectResource> mcpService,
+        IResourceBuilder<ProjectResource> discordService)
+    {
+        if (!TimeSpan.TryParse(builder.Configuration["Ollama:Resilience:AttemptTimeout"], CultureInfo.InvariantCulture, out TimeSpan serverTimeout))
+        {
+            return;
+        }
+
+        TimeSpan clientTimeout = serverTimeout + McpResilienceOptions.ClientMargin;
+        mcpService
+            .WithEnvironment("Ollama__Resilience__AttemptTimeout", serverTimeout.ToString("c", CultureInfo.InvariantCulture))
+            .WithEnvironment("Ollama__Resilience__TotalRequestTimeout", serverTimeout.ToString("c", CultureInfo.InvariantCulture));
+        discordService
+            .WithEnvironment("Mcp__ServerTimeout", serverTimeout.ToString("c", CultureInfo.InvariantCulture))
+            .WithEnvironment("Mcp__Resilience__AttemptTimeout", clientTimeout.ToString("c", CultureInfo.InvariantCulture))
+            .WithEnvironment("Mcp__Resilience__TotalRequestTimeout", clientTimeout.ToString("c", CultureInfo.InvariantCulture));
+    }
 
     private static void Main(string[] args)
     {
@@ -43,6 +66,8 @@ internal static class Program
             .WithEnvironment("Mcp__HttpEndpoint", mcpService.GetEndpoint("http"))
             .WithEnvironment("Mcp__ToolName", "chat")
             .WaitFor(mcpService);
+
+        ForwardTimeouts(builder, mcpService, discordService);
 
         if (!builder.ExecutionContext.IsPublishMode)
         {

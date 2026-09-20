@@ -1,5 +1,7 @@
 namespace Yappr.Models;
 
+using System;
+
 /// <summary>
 /// Configures the MCP server used for summarization.
 /// </summary>
@@ -36,7 +38,19 @@ public sealed class McpOptions
     public string ToolName { get; set; } = "chat";
 
     /// <summary>
-    /// Gets or sets the HTTP resilience settings for the MCP client.
+    /// Gets or sets the timeout the MCP server applies to its own outbound calls (its <c>Ollama:Resilience</c>
+    /// settings). It must match the server; startup fails if <see cref="Resilience"/> does not exceed it.
     /// </summary>
-    public McpResilienceOptions Resilience { get; set; } = new();
+    public TimeSpan ServerTimeout { get; set; } = McpResilienceOptions.ServerTimeout;
+
+    /// <summary>
+    /// Gets or sets the HTTP resilience settings for the MCP client. Timeouts default to the MCP server's
+    /// plus <see cref="McpResilienceOptions.ClientMargin"/>. If the timeouts are overridden in configuration,
+    /// keep them above <see cref="ServerTimeout"/>; startup validation fails otherwise.
+    /// </summary>
+    public McpResilienceOptions Resilience { get; set; } = new()
+    {
+        AttemptTimeout = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin,
+        TotalRequestTimeout = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin,
+    };
 }

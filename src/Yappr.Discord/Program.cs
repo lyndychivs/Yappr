@@ -33,7 +33,8 @@ internal static class Program
 
         builder.AddServiceDefaults();
 
-        builder.Services.AddOptions<McpOptions>().BindConfiguration(McpOptions.SectionName);
+        builder.Services.AddOptions<McpOptions>().BindConfiguration(McpOptions.SectionName).ValidateOnStart();
+        builder.Services.AddSingleton<IValidateOptions<McpOptions>, McpOptionsValidator>();
         builder.Services.AddOptions<TldrLimitsOptions>().BindConfiguration(TldrLimitsOptions.SectionName);
 
         builder.Services
@@ -41,16 +42,7 @@ internal static class Program
                 GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent)
             .AddApplicationCommands();
 
-        builder.Services.AddHttpClient(McpClientToolInvoker.HttpClientName);
-
-        builder.Services.AddOptions<HttpStandardResilienceOptions>(McpClientToolInvoker.HttpClientName)
-            .Configure<IOptions<McpOptions>>((options, mcpOptions) =>
-            {
-                McpResilienceOptions resilience = mcpOptions.Value.Resilience;
-                options.AttemptTimeout.Timeout = resilience.AttemptTimeout;
-                options.TotalRequestTimeout.Timeout = resilience.TotalRequestTimeout;
-                options.CircuitBreaker.SamplingDuration = resilience.CircuitBreakerSamplingDuration;
-            });
+        builder.Services.AddMcpHttpClient();
 
         builder.Services.AddScoped<IMessageFetcher, NetCordMessageFetcher>();
         builder.Services.AddScoped<IMcpToolInvoker, McpClientToolInvoker>();
