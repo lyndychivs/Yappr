@@ -14,4 +14,8 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
     </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Yappr.Models\Yappr.Models.csproj" />
+    </ItemGroup>
 </Project>

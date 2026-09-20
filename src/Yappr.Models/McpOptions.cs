@@ -39,14 +39,12 @@ public sealed class McpOptions
 
     /// <summary>
     /// Gets or sets the HTTP resilience settings for the MCP client. Timeouts default to the MCP server's
-    /// plus <see cref="McpResilienceOptions.ClientMargin"/>. The circuit breaker sampling duration is twice the
-    /// attempt timeout, the minimum the standard resilience handler accepts. If the timeouts are overridden in
-    /// configuration, keep the client's above <c>Ollama:Resilience</c> on the server.
+    /// plus <see cref="McpResilienceOptions.ClientMargin"/>. If the timeouts are overridden in configuration,
+    /// keep the client's above <c>Ollama:Resilience</c> on the server; the two are configured independently.
     /// </summary>
     public McpResilienceOptions Resilience { get; set; } = new()
     {
         AttemptTimeout = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin,
         TotalRequestTimeout = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin,
-        CircuitBreakerSamplingDuration = 2 * (McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin),
     };
 }

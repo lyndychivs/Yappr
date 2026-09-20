@@ -41,16 +41,9 @@ internal static class Program
                 GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent)
             .AddApplicationCommands();
 
-        builder.Services.AddHttpClient(McpClientToolInvoker.HttpClientName).AddStandardResilienceHandler();
-
-        builder.Services.AddOptions<HttpStandardResilienceOptions>($"{McpClientToolInvoker.HttpClientName}-standard")
-            .Configure<IOptions<McpOptions>>((options, mcpOptions) =>
-            {
-                McpResilienceOptions resilience = mcpOptions.Value.Resilience;
-                options.AttemptTimeout.Timeout = resilience.AttemptTimeout;
-                options.TotalRequestTimeout.Timeout = resilience.TotalRequestTimeout;
-                options.CircuitBreaker.SamplingDuration = resilience.CircuitBreakerSamplingDuration;
-            });
+        builder.Services.AddHttpClient(McpClientToolInvoker.HttpClientName)
+            .AddStandardResilienceHandler()
+            .ConfigureTimeouts(serviceProvider => serviceProvider.GetRequiredService<IOptions<McpOptions>>().Value.Resilience);
 
         builder.Services.AddScoped<IMessageFetcher, NetCordMessageFetcher>();
         builder.Services.AddScoped<IMcpToolInvoker, McpClientToolInvoker>();

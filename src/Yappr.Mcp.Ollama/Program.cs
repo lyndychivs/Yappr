@@ -19,16 +19,8 @@ builder.Services.AddHttpClient(OllamaChatTool.HttpClientName, (serviceProvider, 
 {
     OllamaOptions options = serviceProvider.GetRequiredService<IOptions<OllamaOptions>>().Value;
     client.BaseAddress = new Uri(options.Endpoint);
-}).AddStandardResilienceHandler();
-
-builder.Services.AddOptions<HttpStandardResilienceOptions>($"{OllamaChatTool.HttpClientName}-standard")
-    .Configure<IOptions<OllamaOptions>>((options, ollamaOptions) =>
-    {
-        McpResilienceOptions resilience = ollamaOptions.Value.Resilience;
-        options.AttemptTimeout.Timeout = resilience.AttemptTimeout;
-        options.TotalRequestTimeout.Timeout = resilience.TotalRequestTimeout;
-        options.CircuitBreaker.SamplingDuration = resilience.CircuitBreakerSamplingDuration;
-    });
+}).AddStandardResilienceHandler()
+    .ConfigureTimeouts(serviceProvider => serviceProvider.GetRequiredService<IOptions<OllamaOptions>>().Value.Resilience);
 
 builder.Services.AddMcpServer().WithHttpTransport().WithTools<OllamaChatTool>();
 
