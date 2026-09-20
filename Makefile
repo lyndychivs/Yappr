@@ -30,6 +30,7 @@ test: ## Run Unit and Integration Tests
 	dotnet test --project tests/integration/Yappr.Mcp.Ollama.Integration.Tests/Yappr.Mcp.Ollama.Integration.Tests.csproj --configuration Release --no-build
 
 mutate: ## Run Stryker Mutation Testing
+	dotnet tool restore
 	dotnet stryker --config-file tests/unit/Yappr.Unit.Tests/stryker-config.json
 
 # Docker
