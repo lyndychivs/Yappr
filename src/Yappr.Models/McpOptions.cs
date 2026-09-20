@@ -38,12 +38,12 @@ public sealed class McpOptions
     public string ToolName { get; set; } = "chat";
 
     /// <summary>
-    /// Gets or sets the HTTP resilience settings for the MCP client. Timeouts are a minute longer than the
-    /// MCP server's own defaults so the server's error reaches the client instead of a bare timeout.
+    /// Gets or sets the HTTP resilience settings for the MCP client. Timeouts default to the MCP server's
+    /// plus <see cref="McpResilienceOptions.ClientMargin"/>.
     /// </summary>
     public McpResilienceOptions Resilience { get; set; } = new()
     {
-        AttemptTimeout = TimeSpan.FromMinutes(6),
-        TotalRequestTimeout = TimeSpan.FromMinutes(6),
+        AttemptTimeout = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin,
+        TotalRequestTimeout = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin,
     };
 }
