@@ -29,7 +29,7 @@ public sealed class ResilienceExtensionsTests
     }
 
     [Test]
-    public void ConfigureTimeouts_ClientDefaults_OutlastServerDefaults()
+    public void McpOptionsDefaults_ClientAttemptTimeout_ExceedsServerAttemptTimeout()
     {
         Assert.That(
             new McpOptions().Resilience.AttemptTimeout,
@@ -48,6 +48,20 @@ public sealed class ResilienceExtensionsTests
 
         Assert.DoesNotThrow(() => provider.GetRequiredService<IHttpClientFactory>().CreateClient("test"));
         Assert.That(GetApplied(provider).CircuitBreaker.SamplingDuration, Is.EqualTo(TimeSpan.FromMinutes(40)));
+    }
+
+    [Test]
+    public void ConfigureTimeouts_TotalBelowAttempt_TotalIsRaisedToAttempt()
+    {
+        var resilience = new McpResilienceOptions
+        {
+            AttemptTimeout = TimeSpan.FromMinutes(20),
+            TotalRequestTimeout = TimeSpan.FromMinutes(5),
+        };
+        ServiceProvider provider = BuildProvider(resilience);
+
+        Assert.DoesNotThrow(() => provider.GetRequiredService<IHttpClientFactory>().CreateClient("test"));
+        Assert.That(GetApplied(provider).TotalRequestTimeout.Timeout, Is.EqualTo(TimeSpan.FromMinutes(20)));
     }
 
     private static ServiceProvider BuildProvider(McpResilienceOptions resilience)
