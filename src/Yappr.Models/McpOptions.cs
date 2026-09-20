@@ -1,5 +1,7 @@
 namespace Yappr.Models;
 
+using System;
+
 /// <summary>
 /// Configures the MCP server used for summarization.
 /// </summary>
@@ -36,7 +38,12 @@ public sealed class McpOptions
     public string ToolName { get; set; } = "chat";
 
     /// <summary>
-    /// Gets or sets the HTTP resilience settings for the MCP client.
+    /// Gets or sets the HTTP resilience settings for the MCP client. Timeouts are a minute longer than the
+    /// MCP server's own defaults so the server's error reaches the client instead of a bare timeout.
     /// </summary>
-    public McpResilienceOptions Resilience { get; set; } = new();
+    public McpResilienceOptions Resilience { get; set; } = new()
+    {
+        AttemptTimeout = TimeSpan.FromMinutes(6),
+        TotalRequestTimeout = TimeSpan.FromMinutes(6),
+    };
 }

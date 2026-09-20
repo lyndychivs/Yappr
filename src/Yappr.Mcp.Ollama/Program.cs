@@ -19,9 +19,9 @@ builder.Services.AddHttpClient(OllamaChatTool.HttpClientName, (serviceProvider, 
 {
     OllamaOptions options = serviceProvider.GetRequiredService<IOptions<OllamaOptions>>().Value;
     client.BaseAddress = new Uri(options.Endpoint);
-});
+}).AddStandardResilienceHandler();
 
-builder.Services.AddOptions<HttpStandardResilienceOptions>(OllamaChatTool.HttpClientName)
+builder.Services.AddOptions<HttpStandardResilienceOptions>($"{OllamaChatTool.HttpClientName}-standard")
     .Configure<IOptions<OllamaOptions>>((options, ollamaOptions) =>
     {
         McpResilienceOptions resilience = ollamaOptions.Value.Resilience;

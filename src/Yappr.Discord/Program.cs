@@ -41,9 +41,9 @@ internal static class Program
                 GatewayIntents.Guilds | GatewayIntents.GuildMessages | GatewayIntents.MessageContent)
             .AddApplicationCommands();
 
-        builder.Services.AddHttpClient(McpClientToolInvoker.HttpClientName);
+        builder.Services.AddHttpClient(McpClientToolInvoker.HttpClientName).AddStandardResilienceHandler();
 
-        builder.Services.AddOptions<HttpStandardResilienceOptions>(McpClientToolInvoker.HttpClientName)
+        builder.Services.AddOptions<HttpStandardResilienceOptions>($"{McpClientToolInvoker.HttpClientName}-standard")
             .Configure<IOptions<McpOptions>>((options, mcpOptions) =>
             {
                 McpResilienceOptions resilience = mcpOptions.Value.Resilience;
