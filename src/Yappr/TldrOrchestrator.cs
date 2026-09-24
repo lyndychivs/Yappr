@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Options;
 
-using Yappr.Models;
+using Yappr.Models.Dto;
+using Yappr.Models.Enums;
+using Yappr.Models.Options;
 using Yappr.Summarization;
 using Yappr.Windowing;
 

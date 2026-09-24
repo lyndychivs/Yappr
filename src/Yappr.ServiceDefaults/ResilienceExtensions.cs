@@ -5,7 +5,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Http.Resilience;
 
-using Yappr.Models;
+using Yappr.Models.Options;
 
 /// <summary>
 /// Applies <see cref="McpResilienceOptions"/> to a standard HTTP resilience handler.

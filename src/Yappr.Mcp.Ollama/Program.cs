@@ -6,7 +6,8 @@ using Microsoft.Extensions.Http.Resilience;
 using Microsoft.Extensions.Options;
 
 using Yappr.Mcp.Ollama;
-using Yappr.Models;
+using Yappr.Mcp.Ollama.Tools;
+using Yappr.Models.Options;
 using Yappr.ServiceDefaults;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

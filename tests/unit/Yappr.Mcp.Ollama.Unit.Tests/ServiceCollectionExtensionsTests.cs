@@ -14,7 +14,8 @@ using NUnit.Framework;
 
 using Polly.Timeout;
 
-using Yappr.Models;
+using Yappr.Mcp.Ollama.Tools;
+using Yappr.Models.Options;
 
 [TestFixture]
 public sealed class ServiceCollectionExtensionsTests

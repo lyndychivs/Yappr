@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Yappr.Models;
+using Yappr.Models.Dto;
 using Yappr.Windowing;
 
 /// <summary>

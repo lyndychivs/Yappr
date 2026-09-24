@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 using Polly.Timeout;
 
-using Yappr.Models;
+using Yappr.Models.Options;
 using Yappr.Summarization.Mcp;
 
 [TestFixture]

@@ -12,7 +12,9 @@ using NetCord.Hosting.Gateway;
 using NetCord.Hosting.Services;
 using NetCord.Hosting.Services.ApplicationCommands;
 
-using Yappr.Models;
+using Yappr.Discord.Services;
+using Yappr.Discord.Validation;
+using Yappr.Models.Options;
 using Yappr.ServiceDefaults;
 using Yappr.Summarization;
 using Yappr.Summarization.Mcp;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-using Yappr.Models;
+using Yappr.Models.Dto;
 
 /// <summary>
 /// Renders a channel transcript into the summarization prompt, truncating the oldest messages if it would

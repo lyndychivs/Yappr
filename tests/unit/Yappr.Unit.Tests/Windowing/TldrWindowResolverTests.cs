@@ -4,7 +4,8 @@ using System;
 
 using NUnit.Framework;
 
-using Yappr.Models;
+using Yappr.Models.Enums;
+using Yappr.Models.Options;
 using Yappr.Windowing;
 
 [TestFixture]

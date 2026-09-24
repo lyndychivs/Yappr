@@ -8,7 +8,7 @@ using Aspire.Hosting.ApplicationModel;
 
 using Projects;
 
-using Yappr.Models;
+using Yappr.Models.Options;
 
 /// <summary>
 /// The Aspire app host: wires up the Ollama, MCP, and Discord services and their configuration.

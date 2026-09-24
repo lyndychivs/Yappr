@@ -26,6 +26,7 @@ test: ## Run Unit and Integration Tests
 	dotnet test --project tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj --configuration Release --no-build
 	dotnet test --project tests/unit/Yappr.Discord.Unit.Tests/Yappr.Discord.Unit.Tests.csproj --configuration Release --no-build
 	dotnet test --project tests/unit/Yappr.Mcp.Ollama.Unit.Tests/Yappr.Mcp.Ollama.Unit.Tests.csproj --configuration Release --no-build
+	dotnet test --project tests/unit/Yappr.ServiceDefaults.Unit.Tests/Yappr.ServiceDefaults.Unit.Tests.csproj --configuration Release --no-build
 	dotnet test --project tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj --configuration Release --no-build
 	dotnet test --project tests/integration/Yappr.Mcp.Ollama.Integration.Tests/Yappr.Mcp.Ollama.Integration.Tests.csproj --configuration Release --no-build
 

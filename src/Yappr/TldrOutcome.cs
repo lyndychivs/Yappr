@@ -1,6 +1,6 @@
 namespace Yappr;
 
-using Yappr.Models;
+using Yappr.Models.Dto;
 
 /// <summary>
 /// The result of running a `/tldr` request: either a summary or a user-facing failure reason.
