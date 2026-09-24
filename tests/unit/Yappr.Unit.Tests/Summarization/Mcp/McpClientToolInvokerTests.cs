@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
 using ModelContextProtocol.Client;
+using ModelContextProtocol.Protocol;
 
 using NUnit.Framework;
 
@@ -102,6 +103,43 @@ public sealed class McpClientToolInvokerTests
         InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => invoker.CreateTransport())!;
 
         Assert.That(exception.Message, Is.EqualTo("Unsupported Mcp:Transport value '99'."));
+    }
+
+    [Test]
+    public void ExtractText_ResultHasTextBlock_ReturnsItsText()
+    {
+        var result = new CallToolResult
+        {
+            Content = [new TextContentBlock { Text = "hello" }],
+        };
+
+        string text = McpClientToolInvoker.ExtractText(result, "chat");
+
+        Assert.That(text, Is.EqualTo("hello"));
+    }
+
+    [Test]
+    public void ExtractText_ResultHasMultipleTextBlocks_ReturnsFirstOne()
+    {
+        var result = new CallToolResult
+        {
+            Content = [new TextContentBlock { Text = "FIRST" }, new TextContentBlock { Text = "SECOND" }],
+        };
+
+        string text = McpClientToolInvoker.ExtractText(result, "chat");
+
+        Assert.That(text, Is.EqualTo("FIRST"));
+    }
+
+    [Test]
+    public void ExtractText_ResultHasNoTextBlock_Throws()
+    {
+        var result = new CallToolResult { Content = [] };
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => McpClientToolInvoker.ExtractText(result, "chat"))!;
+
+        Assert.That(exception.Message, Is.EqualTo("The MCP tool 'chat' did not return any text content."));
     }
 
     [Test]

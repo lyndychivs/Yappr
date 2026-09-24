@@ -40,10 +40,22 @@ public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, I
             arguments,
             cancellationToken: cancellationToken);
 
+        return ExtractText(result, options.ToolName);
+    }
+
+    /// <summary>
+    /// Extracts the text of the first <see cref="TextContentBlock"/> in <paramref name="result"/>.
+    /// </summary>
+    /// <param name="result">The tool call result to extract text from.</param>
+    /// <param name="toolName">The name of the tool that produced <paramref name="result"/>, for the error message.</param>
+    /// <returns>The first text block's text.</returns>
+    /// <exception cref="InvalidOperationException"><paramref name="result"/> contains no text content.</exception>
+    internal static string ExtractText(CallToolResult result, string toolName)
+    {
         TextContentBlock? textBlock = result.Content.OfType<TextContentBlock>().FirstOrDefault();
 
         return textBlock is null
-            ? throw new InvalidOperationException($"The MCP tool '{options.ToolName}' did not return any text content.")
+            ? throw new InvalidOperationException($"The MCP tool '{toolName}' did not return any text content.")
             : textBlock.Text;
     }
 
