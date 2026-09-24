@@ -20,8 +20,11 @@ public sealed class ResilienceExtensionsTests
         HttpStandardResilienceOptions applied = Apply(new McpOptions().Resilience);
 
         TimeSpan expected = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin;
-        Assert.That(applied.AttemptTimeout.Timeout, Is.EqualTo(expected));
-        Assert.That(applied.TotalRequestTimeout.Timeout, Is.EqualTo(expected));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(applied.AttemptTimeout.Timeout, Is.EqualTo(expected));
+            Assert.That(applied.TotalRequestTimeout.Timeout, Is.EqualTo(expected));
+        }
     }
 
     [Test]

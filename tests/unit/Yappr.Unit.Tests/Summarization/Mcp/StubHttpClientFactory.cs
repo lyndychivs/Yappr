@@ -5,7 +5,7 @@ using System.Net.Http;
 internal sealed class StubHttpClientFactory : IHttpClientFactory
 {
     /// <summary>
-    /// The most recently created <see cref="HttpClient"/>, so tests can observe its lifetime.
+    /// Gets the most recently created <see cref="HttpClient"/>, so tests can observe its lifetime.
     /// </summary>
     public HttpClient? LastCreatedClient { get; private set; }
 

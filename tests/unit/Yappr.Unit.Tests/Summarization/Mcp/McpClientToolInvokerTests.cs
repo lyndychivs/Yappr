@@ -29,8 +29,11 @@ public sealed class McpClientToolInvokerTests
 
         IClientTransport transport = invoker.CreateTransport();
 
-        Assert.That(transport, Is.InstanceOf<StdioClientTransport>());
-        Assert.That(((StdioClientTransport)transport).Name, Is.EqualTo("Yappr"));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(transport, Is.InstanceOf<StdioClientTransport>());
+            Assert.That(((StdioClientTransport)transport).Name, Is.EqualTo("Yappr"));
+        }
     }
 
     [Test]

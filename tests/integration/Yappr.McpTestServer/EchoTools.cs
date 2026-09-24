@@ -20,13 +20,13 @@ public sealed class EchoTools
 
     [McpServerTool(Name = "silent")]
     [Description("Returns no text content, for exercising McpClientToolInvoker's missing-content error path.")]
-    public static void Silent(string prompt)
+    public static void Silent()
     {
     }
 
     [McpServerTool(Name = "multi")]
     [Description("Returns two distinct text blocks, for exercising McpClientToolInvoker's first-text-block selection.")]
-    public static CallToolResult Multi(string prompt)
+    public static CallToolResult Multi()
     {
         return new CallToolResult
         {

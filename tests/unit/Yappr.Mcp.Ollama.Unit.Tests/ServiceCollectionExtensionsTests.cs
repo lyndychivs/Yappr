@@ -45,8 +45,11 @@ public sealed class ServiceCollectionExtensionsTests
         Exception? thrown = Assert.CatchAsync(async () => await client.GetAsync(new Uri("http://localhost/")));
         stopwatch.Stop();
 
-        Assert.That(thrown, Is.InstanceOf<TimeoutRejectedException>());
-        Assert.That(stopwatch.Elapsed, Is.LessThan(TimeSpan.FromSeconds(10)));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(thrown, Is.InstanceOf<TimeoutRejectedException>());
+            Assert.That(stopwatch.Elapsed, Is.LessThan(TimeSpan.FromSeconds(10)));
+        }
     }
 
     private static ServiceProvider BuildProvider(Dictionary<string, string?> configuration)

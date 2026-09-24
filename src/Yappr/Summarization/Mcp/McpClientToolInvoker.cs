@@ -24,9 +24,11 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
     /// </summary>
     public const string HttpClientName = nameof(McpClientToolInvoker);
 
-    private readonly McpOptions options;
-    private readonly IHttpClientFactory httpClientFactory;
-    private readonly CallToolFunc callTool;
+    private readonly McpOptions _mcpOptions;
+
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    private readonly CallToolFunc _callToolFunc;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="McpClientToolInvoker"/> class.
@@ -48,9 +50,9 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
     /// <param name="callTool">The function used to connect and call the tool.</param>
     internal McpClientToolInvoker(IHttpClientFactory httpClientFactory, IOptions<McpOptions> options, CallToolFunc callTool)
     {
-        this.httpClientFactory = httpClientFactory;
-        this.options = options.Value;
-        this.callTool = callTool;
+        _httpClientFactory = httpClientFactory;
+        _mcpOptions = options.Value;
+        _callToolFunc = callTool;
     }
 
     /// <summary>
@@ -74,9 +76,9 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
 
         IReadOnlyDictionary<string, object?> arguments = BuildArguments(prompt);
 
-        CallToolResult result = await callTool(transport, options.ToolName, arguments, cancellationToken);
+        CallToolResult result = await _callToolFunc(transport, _mcpOptions.ToolName, arguments, cancellationToken);
 
-        return ExtractText(result, options.ToolName);
+        return ExtractText(result, _mcpOptions.ToolName);
     }
 
     /// <summary>
@@ -111,25 +113,25 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
     /// <returns>The client transport to connect with.</returns>
     internal IClientTransport CreateTransport()
     {
-        return options.Transport switch
+        return _mcpOptions.Transport switch
         {
             McpTransportType.Stdio => new StdioClientTransport(new StdioClientTransportOptions
             {
                 Name = "Yappr",
-                Command = options.Command ?? throw new InvalidOperationException("Mcp:Command must be configured for the Stdio transport."),
-                Arguments = options.Arguments,
+                Command = _mcpOptions.Command ?? throw new InvalidOperationException("Mcp:Command must be configured for the Stdio transport."),
+                Arguments = _mcpOptions.Arguments,
             }),
 
             McpTransportType.Http => new HttpClientTransport(
                 new HttpClientTransportOptions
                 {
-                    Endpoint = new Uri(options.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
+                    Endpoint = new Uri(_mcpOptions.HttpEndpoint ?? throw new InvalidOperationException("Mcp:HttpEndpoint must be configured for the Http transport.")),
                 },
-                httpClientFactory.CreateClient(HttpClientName),
+                _httpClientFactory.CreateClient(HttpClientName),
                 loggerFactory: null,
                 ownsHttpClient: true),
 
-            _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{options.Transport}'."),
+            _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{_mcpOptions.Transport}'."),
         };
     }
 
