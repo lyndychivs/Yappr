@@ -2,6 +2,7 @@ namespace Yappr.Unit.Tests.Summarization.Mcp;
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.Options;
 
@@ -56,6 +57,25 @@ public sealed class McpClientToolInvokerTests
         IClientTransport transport = invoker.CreateTransport();
 
         Assert.That(transport, Is.InstanceOf<HttpClientTransport>());
+    }
+
+    [Test]
+    public async Task CreateTransport_HttpWithEndpoint_OwnsAndDisposesHttpClient()
+    {
+        var httpClientFactory = new StubHttpClientFactory();
+        var invoker = new McpClientToolInvoker(httpClientFactory, Options.Create(new McpOptions
+        {
+            Transport = McpTransportType.Http,
+            HttpEndpoint = "https://example.test/mcp",
+        }));
+
+        IClientTransport transport = invoker.CreateTransport();
+        await ((HttpClientTransport)transport).DisposeAsync();
+
+        // ownsHttpClient: true means disposing the transport must dispose the HttpClient it was given.
+        Assert.That(
+            () => httpClientFactory.LastCreatedClient!.Timeout = TimeSpan.FromSeconds(5),
+            Throws.InstanceOf<ObjectDisposedException>());
     }
 
     [Test]
