@@ -73,6 +73,9 @@
         <Project Path="tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj" />
     </Folder>
     <Folder Name="/tests/integration/">
+        <Project Path="tests/integration/Yappr.Discord.Integration.Tests/Yappr.Discord.Integration.Tests.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
         <Project Path="tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj">
             <Build Solution="Stryker|*" Project="false" />
         </Project>
