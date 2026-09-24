@@ -22,6 +22,11 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
     : ApplicationCommandModule<ApplicationCommandContext>
 {
     /// <summary>
+    /// The response content used when <see cref="RunAsync"/> catches an unexpected exception.
+    /// </summary>
+    private const string GenericFailureContent = "⚠️ Something went wrong while sniffing the yap, Please try again.";
+
+    /// <summary>
     /// Summarises the last <paramref name="count"/> days of the channel.
     /// </summary>
     /// <param name="count">The number of days to summarize.</param>
@@ -58,6 +63,20 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         int count)
     {
         return RunAsync(TldrWindowKind.Messages, count);
+    }
+
+    /// <summary>
+    /// Formats <paramref name="outcome"/> as the `/tldr` response content.
+    /// </summary>
+    /// <param name="outcome">The completed `/tldr` request's outcome.</param>
+    /// <returns>The summary, or the user-facing failure reason, formatted for a Discord message.</returns>
+    internal static string BuildResponseContent(TldrOutcome outcome)
+    {
+        return outcome.IsSuccess
+            ? string.Create(
+                CultureInfo.InvariantCulture,
+                $"### 📋 TL;DR *(from {outcome.Result!.MessageCount} messages)*\n{outcome.Result.Summary}")
+            : $"⚠️ {outcome.Error}";
     }
 
     [LoggerMessage(
@@ -97,16 +116,12 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         {
             TldrOutcome outcome = await orchestrator.RunAsync(Context.Channel.Id, kind, count, CancellationToken.None);
 
-            content = outcome.IsSuccess
-                ? string.Create(
-                    CultureInfo.InvariantCulture,
-                    $"### 📋 TL;DR *(from {outcome.Result!.MessageCount} messages)*\n{outcome.Result.Summary}")
-                : $"⚠️ {outcome.Error}";
+            content = BuildResponseContent(outcome);
         }
         catch (Exception exception)
         {
             LogSummarisationFailed(logger, exception, kind, count, Context.User.Username, Context.User.Id);
-            content = "⚠️ Something went wrong while sniffing the yap, Please try again.";
+            content = GenericFailureContent;
         }
 
         await ModifyResponseAsync(options => options.Content = content);
