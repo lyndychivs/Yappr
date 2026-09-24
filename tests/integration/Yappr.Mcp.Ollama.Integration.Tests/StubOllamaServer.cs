@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 internal sealed class StubOllamaServer : IDisposable
 {
-    private readonly HttpListener listener = new();
+    private readonly HttpListener _listener = new();
 
-    private readonly CancellationTokenSource cts = new();
+    private readonly CancellationTokenSource _cts = new();
 
-    private readonly int statusCode;
+    private readonly int _statusCode;
 
-    private readonly string responseBody;
+    private readonly string _responseBody;
 
-    private readonly TimeSpan delay;
+    private readonly TimeSpan _delay;
 
-    private readonly int failuresBeforeSuccess;
+    private readonly int _failuresBeforeSuccess;
 
-    private int requestCount;
+    private int _requestCount;
 
     public StubOllamaServer(
         int statusCode = 200,
@@ -30,15 +30,15 @@ internal sealed class StubOllamaServer : IDisposable
         TimeSpan delay = default,
         int failuresBeforeSuccess = 0)
     {
-        this.statusCode = statusCode;
-        this.responseBody = responseBody;
-        this.delay = delay;
-        this.failuresBeforeSuccess = failuresBeforeSuccess;
+        _statusCode = statusCode;
+        _responseBody = responseBody;
+        _delay = delay;
+        _failuresBeforeSuccess = failuresBeforeSuccess;
 
         int port = GetFreeTcpPort();
         Address = string.Create(CultureInfo.InvariantCulture, $"http://127.0.0.1:{port}");
-        listener.Prefixes.Add($"{Address}/");
-        listener.Start();
+        _listener.Prefixes.Add($"{Address}/");
+        _listener.Start();
         _ = AcceptLoopAsync();
     }
 
@@ -47,13 +47,13 @@ internal sealed class StubOllamaServer : IDisposable
     /// <summary>
     /// Gets the number of requests received so far.
     /// </summary>
-    public int RequestCount => requestCount;
+    public int RequestCount => _requestCount;
 
     public void Dispose()
     {
-        cts.Cancel();
-        listener.Close();
-        cts.Dispose();
+        _cts.Cancel();
+        _listener.Close();
+        _cts.Dispose();
     }
 
     private static int GetFreeTcpPort()
@@ -67,27 +67,27 @@ internal sealed class StubOllamaServer : IDisposable
     {
         try
         {
-            while (!cts.IsCancellationRequested)
+            while (!_cts.IsCancellationRequested)
             {
-                HttpListenerContext context = await listener.GetContextAsync().WaitAsync(cts.Token);
-                int requestNumber = Interlocked.Increment(ref requestCount);
+                HttpListenerContext context = await _listener.GetContextAsync().WaitAsync(_cts.Token);
+                int requestNumber = Interlocked.Increment(ref _requestCount);
 
-                if (delay > TimeSpan.Zero)
+                if (_delay > TimeSpan.Zero)
                 {
-                    await Task.Delay(delay, cts.Token);
+                    await Task.Delay(_delay, _cts.Token);
                 }
 
-                bool isTransientFailure = requestNumber <= failuresBeforeSuccess;
-                string body = isTransientFailure ? """{"error":"temporarily unavailable"}""" : responseBody;
+                bool isTransientFailure = requestNumber <= _failuresBeforeSuccess;
+                string body = isTransientFailure ? """{"error":"temporarily unavailable"}""" : _responseBody;
                 byte[] buffer = Encoding.UTF8.GetBytes(body);
-                context.Response.StatusCode = isTransientFailure ? 503 : statusCode;
+                context.Response.StatusCode = isTransientFailure ? 503 : _statusCode;
                 context.Response.ContentType = "application/json";
                 context.Response.ContentLength64 = buffer.Length;
-                await context.Response.OutputStream.WriteAsync(buffer, cts.Token);
+                await context.Response.OutputStream.WriteAsync(buffer, _cts.Token);
                 context.Response.OutputStream.Close();
             }
         }
-        catch (Exception ex) when (cts.IsCancellationRequested
+        catch (Exception ex) when (_cts.IsCancellationRequested
             && ex is OperationCanceledException
             or ObjectDisposedException
             or HttpListenerException)

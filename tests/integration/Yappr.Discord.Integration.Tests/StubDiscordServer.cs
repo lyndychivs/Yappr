@@ -24,8 +24,9 @@ internal sealed class StubDiscordServer
     /// </summary>
     public const ulong ChannelId = 123;
 
-    private readonly IReadOnlyList<StubDiscordMessage> messagesNewestFirst;
-    private readonly int channelType;
+    private readonly IReadOnlyList<StubDiscordMessage> _messagesNewestFirst;
+
+    private readonly int _channelType;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StubDiscordServer"/> class.
@@ -34,8 +35,8 @@ internal sealed class StubDiscordServer
     /// <param name="channelType">The Discord channel type to report (0 = guild text).</param>
     public StubDiscordServer(IReadOnlyList<StubDiscordMessage> messagesNewestFirst, int channelType = 0)
     {
-        this.messagesNewestFirst = messagesNewestFirst;
-        this.channelType = channelType;
+        _messagesNewestFirst = messagesNewestFirst;
+        _channelType = channelType;
     }
 
     /// <summary>
@@ -96,15 +97,14 @@ internal sealed class StubDiscordServer
 
     private string BuildChannelJson()
     {
-        return FormattableString.Invariant(
-            $$"""{"id":"{{ChannelId}}","type":{{channelType}},"guild_id":"456","name":"general","position":0,"permission_overwrites":[],"nsfw":false,"parent_id":null}""");
+        return string.Create(CultureInfo.InvariantCulture, $$"""{"id":"{{ChannelId}}","type":{{_channelType}},"guild_id":"456","name":"general","position":0,"permission_overwrites":[],"nsfw":false,"parent_id":null}""");
     }
 
     private string BuildMessagesJson()
     {
-        IEnumerable<string> messageObjects = messagesNewestFirst.Select(BuildMessageJson);
+        IEnumerable<string> messageObjects = _messagesNewestFirst.Select(BuildMessageJson);
 
-        return $"[{string.Join(",", messageObjects)}]";
+        return $"[{string.Join(',', messageObjects)}]";
     }
 
     private string BuildMessageJson(StubDiscordMessage message)
@@ -112,8 +112,7 @@ internal sealed class StubDiscordServer
         string timestamp = message.TimestampUtc.ToString("yyyy-MM-ddTHH:mm:ss.ffffffzzz", CultureInfo.InvariantCulture);
         ulong snowflakeId = ToSnowflakeId(message.TimestampUtc);
 
-        return FormattableString.Invariant(
-            $$"""
+        return $$"""
             {
                 "id": "{{snowflakeId}}",
                 "channel_id": "{{ChannelId}}",
@@ -130,6 +129,6 @@ internal sealed class StubDiscordServer
                 "pinned": false,
                 "type": 0
             }
-            """);
+            """;
     }
 }
