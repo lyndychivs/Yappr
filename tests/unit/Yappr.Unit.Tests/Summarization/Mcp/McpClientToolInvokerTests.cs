@@ -2,6 +2,7 @@ namespace Yappr.Unit.Tests.Summarization.Mcp;
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.Options;
@@ -103,6 +104,71 @@ public sealed class McpClientToolInvokerTests
         InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => invoker.CreateTransport())!;
 
         Assert.That(exception.Message, Is.EqualTo("Unsupported Mcp:Transport value '99'."));
+    }
+
+    [Test]
+    public async Task InvokeAsync_ResultHasTextBlock_PassesArgumentsThroughAndReturnsExtractedText()
+    {
+        IClientTransport? capturedTransport = null;
+        string? capturedToolName = null;
+        IReadOnlyDictionary<string, object?>? capturedArguments = null;
+        CancellationToken capturedToken = default;
+
+        Task<CallToolResult> CallTool(
+            IClientTransport transport,
+            string toolName,
+            IReadOnlyDictionary<string, object?> arguments,
+            CancellationToken cancellationToken)
+        {
+            capturedTransport = transport;
+            capturedToolName = toolName;
+            capturedArguments = arguments;
+            capturedToken = cancellationToken;
+
+            return Task.FromResult(new CallToolResult { Content = [new TextContentBlock { Text = "the summary" }] });
+        }
+
+        var invoker = new McpClientToolInvoker(
+            new StubHttpClientFactory(),
+            Options.Create(new McpOptions
+            {
+                Transport = McpTransportType.Stdio,
+                Command = "some-mcp-server",
+                ToolName = "chat",
+            }),
+            CallTool);
+
+        using var cancellationTokenSource = new CancellationTokenSource();
+
+        string result = await invoker.InvokeAsync("hello", cancellationTokenSource.Token);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Is.EqualTo("the summary"));
+            Assert.That(capturedTransport, Is.InstanceOf<StdioClientTransport>());
+            Assert.That(capturedToolName, Is.EqualTo("chat"));
+            Assert.That(capturedArguments!["prompt"], Is.EqualTo("hello"));
+            Assert.That(capturedToken, Is.EqualTo(cancellationTokenSource.Token));
+        }
+    }
+
+    [Test]
+    public void InvokeAsync_CallToolReturnsNoTextContent_Throws()
+    {
+        var invoker = new McpClientToolInvoker(
+            new StubHttpClientFactory(),
+            Options.Create(new McpOptions
+            {
+                Transport = McpTransportType.Stdio,
+                Command = "some-mcp-server",
+                ToolName = "silent",
+            }),
+            (_, _, _, _) => Task.FromResult(new CallToolResult { Content = [] }));
+
+        InvalidOperationException? exception = Assert.ThrowsAsync<InvalidOperationException>(
+            () => invoker.InvokeAsync("hello", CancellationToken.None));
+
+        Assert.That(exception!.Message, Is.EqualTo("The MCP tool 'silent' did not return any text content."));
     }
 
     [Test]

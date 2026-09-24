@@ -17,28 +17,64 @@ using Yappr.Models;
 /// <summary>
 /// Invokes the configured MCP server's summarization tool, opening a new client connection per call.
 /// </summary>
-public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, IOptions<McpOptions> options) : IMcpToolInvoker
+public sealed class McpClientToolInvoker : IMcpToolInvoker
 {
     /// <summary>
     /// The name of the named <see cref="HttpClient"/> used for the http transport.
     /// </summary>
     public const string HttpClientName = nameof(McpClientToolInvoker);
 
-    private readonly McpOptions options = options.Value;
+    private readonly McpOptions options;
+    private readonly IHttpClientFactory httpClientFactory;
+    private readonly CallToolFunc callTool;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="McpClientToolInvoker"/> class.
+    /// </summary>
+    /// <param name="httpClientFactory">The factory used to create the named <see cref="HttpClient"/> for the http transport.</param>
+    /// <param name="options">The MCP options to invoke tools with.</param>
+    public McpClientToolInvoker(IHttpClientFactory httpClientFactory, IOptions<McpOptions> options)
+        : this(httpClientFactory, options, ConnectAndCallToolAsync)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="McpClientToolInvoker"/> class that calls tools through
+    /// <paramref name="callTool"/> instead of a real MCP connection, so <see cref="InvokeAsync"/>'s orchestration
+    /// can be unit tested without one.
+    /// </summary>
+    /// <param name="httpClientFactory">The factory used to create the named <see cref="HttpClient"/> for the http transport.</param>
+    /// <param name="options">The MCP options to invoke tools with.</param>
+    /// <param name="callTool">The function used to connect and call the tool.</param>
+    internal McpClientToolInvoker(IHttpClientFactory httpClientFactory, IOptions<McpOptions> options, CallToolFunc callTool)
+    {
+        this.httpClientFactory = httpClientFactory;
+        this.options = options.Value;
+        this.callTool = callTool;
+    }
+
+    /// <summary>
+    /// Connects <paramref name="transport"/> and calls <paramref name="toolName"/> with <paramref name="arguments"/>.
+    /// </summary>
+    /// <param name="transport">The client transport to connect with.</param>
+    /// <param name="toolName">The name of the tool to call.</param>
+    /// <param name="arguments">The tool call arguments.</param>
+    /// <param name="cancellationToken">A token to cancel the connection and tool call.</param>
+    /// <returns>The tool call result.</returns>
+    internal delegate Task<CallToolResult> CallToolFunc(
+        IClientTransport transport,
+        string toolName,
+        IReadOnlyDictionary<string, object?> arguments,
+        CancellationToken cancellationToken);
 
     /// <inheritdoc/>
     public async Task<string> InvokeAsync(string prompt, CancellationToken cancellationToken)
     {
         IClientTransport transport = CreateTransport();
 
-        await using McpClient client = await McpClient.CreateAsync(transport, cancellationToken: cancellationToken);
-
         IReadOnlyDictionary<string, object?> arguments = BuildArguments(prompt);
 
-        CallToolResult result = await client.CallToolAsync(
-            options.ToolName,
-            arguments,
-            cancellationToken: cancellationToken);
+        CallToolResult result = await callTool(transport, options.ToolName, arguments, cancellationToken);
 
         return ExtractText(result, options.ToolName);
     }
@@ -95,5 +131,24 @@ public sealed class McpClientToolInvoker(IHttpClientFactory httpClientFactory, I
 
             _ => throw new InvalidOperationException($"Unsupported Mcp:Transport value '{options.Transport}'."),
         };
+    }
+
+    /// <summary>
+    /// Opens an MCP client connection over <paramref name="transport"/> and calls <paramref name="toolName"/>.
+    /// </summary>
+    /// <param name="transport">The client transport to connect with.</param>
+    /// <param name="toolName">The name of the tool to call.</param>
+    /// <param name="arguments">The tool call arguments.</param>
+    /// <param name="cancellationToken">A token to cancel the connection and tool call.</param>
+    /// <returns>The tool call result.</returns>
+    private static async Task<CallToolResult> ConnectAndCallToolAsync(
+        IClientTransport transport,
+        string toolName,
+        IReadOnlyDictionary<string, object?> arguments,
+        CancellationToken cancellationToken)
+    {
+        await using McpClient client = await McpClient.CreateAsync(transport, cancellationToken: cancellationToken);
+
+        return await client.CallToolAsync(toolName, arguments, cancellationToken: cancellationToken);
     }
 }
