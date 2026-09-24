@@ -2,6 +2,7 @@ namespace Yappr.McpTestServer;
 
 using System.ComponentModel;
 
+using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
 /// <summary>
@@ -21,5 +22,19 @@ public sealed class EchoTools
     [Description("Returns no text content, for exercising McpClientToolInvoker's missing-content error path.")]
     public static void Silent(string prompt)
     {
+    }
+
+    [McpServerTool(Name = "multi")]
+    [Description("Returns two distinct text blocks, for exercising McpClientToolInvoker's first-text-block selection.")]
+    public static CallToolResult Multi(string prompt)
+    {
+        return new CallToolResult
+        {
+            Content =
+            [
+                new TextContentBlock { Text = "FIRST" },
+                new TextContentBlock { Text = "SECOND" },
+            ],
+        };
     }
 }

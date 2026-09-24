@@ -58,4 +58,26 @@ public sealed class McpClientToolInvokerTests
 
         Assert.That(exception!.Message, Is.EqualTo("The MCP tool 'silent' did not return any text content."));
     }
+
+    [Test]
+    public async Task InvokeAsync_ToolReturnsMultipleTextBlocks_ReturnsFirstTextBlock()
+    {
+        string serverDllPath = Assembly.Load("Yappr.McpTestServer").Location;
+
+        var options = Options.Create(new McpOptions
+        {
+            Transport = McpTransportType.Stdio,
+            Command = "dotnet",
+            Arguments = [serverDllPath],
+            ToolName = "multi",
+        });
+
+        var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), options);
+
+        string result = await invoker.InvokeAsync("hello from the integration test", CancellationToken.None);
+
+        // The tool returns two text blocks, "FIRST" and "SECOND": this pins down that the *first* text block
+        // wins, not the last.
+        Assert.That(result, Is.EqualTo("FIRST"));
+    }
 }
