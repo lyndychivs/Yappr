@@ -21,7 +21,7 @@ using Yappr.Windowing;
 [TestFixture]
 public sealed class NetCordMessageFetcherTests
 {
-    private static readonly DateTimeOffset BaseTime = new(2024, 1, 1, 12, 0, 0, TimeSpan.Zero);
+    private static readonly DateTimeOffset _baseTime = new(2024, 1, 1, 12, 0, 0, TimeSpan.Zero);
 
     [Test]
     public async Task FetchAsync_FiltersBotAndEmptyMessages_ReturnsRealMessagesOldestFirst()
@@ -29,10 +29,10 @@ public sealed class NetCordMessageFetcherTests
         // Discord returns messages newest first; NetCordMessageFetcher walks and reverses them.
         StubDiscordMessage[] messagesNewestFirst =
         [
-            new(Username: "carol", IsBot: false, Content: "third", TimestampUtc: BaseTime.AddMinutes(3)),
-            new(Username: "bot", IsBot: true, Content: "ignored bot message", TimestampUtc: BaseTime.AddMinutes(2)),
-            new(Username: "bob", IsBot: false, Content: "   ", TimestampUtc: BaseTime.AddMinutes(1)),
-            new(Username: "alice", IsBot: false, Content: "first", TimestampUtc: BaseTime),
+            new(Username: "carol", IsBot: false, Content: "third", TimestampUtc: _baseTime.AddMinutes(3)),
+            new(Username: "bot", IsBot: true, Content: "ignored bot message", TimestampUtc: _baseTime.AddMinutes(2)),
+            new(Username: "bob", IsBot: false, Content: "   ", TimestampUtc: _baseTime.AddMinutes(1)),
+            new(Username: "alice", IsBot: false, Content: "first", TimestampUtc: _baseTime),
         ];
 
         IReadOnlyList<ChannelMessage> result = await FetchAsync(messagesNewestFirst, TldrWindowResolution.ForMessageLimit(100));
@@ -40,8 +40,8 @@ public sealed class NetCordMessageFetcherTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Has.Count.EqualTo(2));
-            Assert.That(result[0], Is.EqualTo(new ChannelMessage("alice", "first", BaseTime)));
-            Assert.That(result[1], Is.EqualTo(new ChannelMessage("carol", "third", BaseTime.AddMinutes(3))));
+            Assert.That(result[0], Is.EqualTo(new ChannelMessage("alice", "first", _baseTime)));
+            Assert.That(result[1], Is.EqualTo(new ChannelMessage("carol", "third", _baseTime.AddMinutes(3))));
         }
     }
 
@@ -50,12 +50,12 @@ public sealed class NetCordMessageFetcherTests
     {
         StubDiscordMessage[] messagesNewestFirst =
         [
-            new(Username: "carol", IsBot: false, Content: "newest", TimestampUtc: BaseTime.AddMinutes(10)),
-            new(Username: "bob", IsBot: false, Content: "right at cutoff", TimestampUtc: BaseTime.AddMinutes(5)),
-            new(Username: "alice", IsBot: false, Content: "too old", TimestampUtc: BaseTime),
+            new(Username: "carol", IsBot: false, Content: "newest", TimestampUtc: _baseTime.AddMinutes(10)),
+            new(Username: "bob", IsBot: false, Content: "right at cutoff", TimestampUtc: _baseTime.AddMinutes(5)),
+            new(Username: "alice", IsBot: false, Content: "too old", TimestampUtc: _baseTime),
         ];
 
-        IReadOnlyList<ChannelMessage> result = await FetchAsync(messagesNewestFirst, TldrWindowResolution.ForTimeCutoff(BaseTime.AddMinutes(5)));
+        IReadOnlyList<ChannelMessage> result = await FetchAsync(messagesNewestFirst, TldrWindowResolution.ForTimeCutoff(_baseTime.AddMinutes(5)));
 
         string[] expectedContent = ["right at cutoff", "newest"];
 
@@ -71,9 +71,9 @@ public sealed class NetCordMessageFetcherTests
     {
         StubDiscordMessage[] messagesNewestFirst =
         [
-            new(Username: "carol", IsBot: false, Content: "newest", TimestampUtc: BaseTime.AddMinutes(2)),
-            new(Username: "bob", IsBot: false, Content: "middle", TimestampUtc: BaseTime.AddMinutes(1)),
-            new(Username: "alice", IsBot: false, Content: "oldest", TimestampUtc: BaseTime),
+            new(Username: "carol", IsBot: false, Content: "newest", TimestampUtc: _baseTime.AddMinutes(2)),
+            new(Username: "bob", IsBot: false, Content: "middle", TimestampUtc: _baseTime.AddMinutes(1)),
+            new(Username: "alice", IsBot: false, Content: "oldest", TimestampUtc: _baseTime),
         ];
 
         IReadOnlyList<ChannelMessage> result = await FetchAsync(messagesNewestFirst, TldrWindowResolution.ForMessageLimit(2));

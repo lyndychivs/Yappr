@@ -29,7 +29,7 @@ public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOption
     /// </summary>
     internal const string HttpClientName = nameof(OllamaChatTool);
 
-    private readonly OllamaOptions options = options.Value;
+    private readonly OllamaOptions _options = options.Value;
 
     /// <summary>
     /// Summarises <paramref name="prompt"/> via the configured Ollama model.
@@ -41,7 +41,7 @@ public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOption
     [Description("Summarises the given prompt.")]
     public async Task<string> Chat(string prompt, CancellationToken cancellationToken)
     {
-        var request = new OllamaGenerateRequest(options.Model, prompt, Stream: false);
+        var request = new OllamaGenerateRequest(_options.Model, prompt, Stream: false);
 
         using HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
 
