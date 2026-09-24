@@ -9,7 +9,7 @@ using Moq;
 
 using NUnit.Framework;
 
-using Yappr.Models;
+using Yappr.Models.Dto;
 using Yappr.Summarization;
 using Yappr.Summarization.Mcp;
 

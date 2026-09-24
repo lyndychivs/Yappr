@@ -12,7 +12,8 @@ using Microsoft.Extensions.Options;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 
-using Yappr.Models;
+using Yappr.Models.Enums;
+using Yappr.Models.Options;
 
 /// <summary>
 /// Invokes the configured MCP server's summarization tool, opening a new client connection per call.

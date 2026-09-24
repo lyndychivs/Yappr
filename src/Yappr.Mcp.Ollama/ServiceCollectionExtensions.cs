@@ -5,7 +5,8 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Yappr.Models;
+using Yappr.Mcp.Ollama.Tools;
+using Yappr.Models.Options;
 using Yappr.ServiceDefaults;
 
 /// <summary>

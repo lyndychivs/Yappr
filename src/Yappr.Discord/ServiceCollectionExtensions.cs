@@ -3,7 +3,7 @@ namespace Yappr.Discord;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-using Yappr.Models;
+using Yappr.Models.Options;
 using Yappr.ServiceDefaults;
 using Yappr.Summarization.Mcp;
 

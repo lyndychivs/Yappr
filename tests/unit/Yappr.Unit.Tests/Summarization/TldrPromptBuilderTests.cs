@@ -6,7 +6,7 @@ using System.Globalization;
 
 using NUnit.Framework;
 
-using Yappr.Models;
+using Yappr.Models.Dto;
 using Yappr.Summarization;
 
 [TestFixture]

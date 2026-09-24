@@ -70,6 +70,9 @@
         <Project Path="tests/unit/Yappr.Mcp.Ollama.Unit.Tests/Yappr.Mcp.Ollama.Unit.Tests.csproj">
             <Build Solution="Stryker|*" Project="false" />
         </Project>
+        <Project Path="tests/unit/Yappr.ServiceDefaults.Unit.Tests/Yappr.ServiceDefaults.Unit.Tests.csproj">
+            <Build Solution="Stryker|*" Project="false" />
+        </Project>
         <Project Path="tests/unit/Yappr.Unit.Tests/Yappr.Unit.Tests.csproj" />
     </Folder>
     <Folder Name="/tests/integration/">
@@ -79,10 +82,12 @@
         <Project Path="tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj">
             <Build Solution="Stryker|*" Project="false" />
         </Project>
-        <Project Path="tests/integration/Yappr.McpTestServer/Yappr.McpTestServer.csproj">
+        <Project Path="tests/integration/Yappr.Mcp.Ollama.Integration.Tests/Yappr.Mcp.Ollama.Integration.Tests.csproj">
             <Build Solution="Stryker|*" Project="false" />
         </Project>
-        <Project Path="tests/integration/Yappr.Mcp.Ollama.Integration.Tests/Yappr.Mcp.Ollama.Integration.Tests.csproj">
+    </Folder>
+    <Folder Name="/tests/fixtures/">
+        <Project Path="tests/fixtures/Yappr.McpTestServer/Yappr.McpTestServer.csproj">
             <Build Solution="Stryker|*" Project="false" />
         </Project>
     </Folder>

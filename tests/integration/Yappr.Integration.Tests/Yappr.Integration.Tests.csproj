@@ -11,6 +11,6 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\Yappr\Yappr.csproj" />
         <ProjectReference Include="..\..\..\src\Yappr.Models\Yappr.Models.csproj" />
-        <ProjectReference Include="..\Yappr.McpTestServer\Yappr.McpTestServer.csproj" />
+        <ProjectReference Include="..\..\fixtures\Yappr.McpTestServer\Yappr.McpTestServer.csproj" />
     </ItemGroup>
 </Project>

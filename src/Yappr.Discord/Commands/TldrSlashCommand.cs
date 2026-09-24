@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using NetCord.Rest;
 using NetCord.Services.ApplicationCommands;
 
-using Yappr.Models;
+using Yappr.Models.Enums;
 
 /// <summary>
 /// The `/tldr` slash command and its `days`/`hours`/`messages` subcommands.

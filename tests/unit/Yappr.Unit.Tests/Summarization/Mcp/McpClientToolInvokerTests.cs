@@ -12,7 +12,8 @@ using ModelContextProtocol.Protocol;
 
 using NUnit.Framework;
 
-using Yappr.Models;
+using Yappr.Models.Enums;
+using Yappr.Models.Options;
 using Yappr.Summarization.Mcp;
 
 [TestFixture]

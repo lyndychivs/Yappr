@@ -3,7 +3,8 @@ namespace Yappr.Windowing;
 using System;
 using System.Globalization;
 
-using Yappr.Models;
+using Yappr.Models.Enums;
+using Yappr.Models.Options;
 
 /// <summary>
 /// Turns a `/tldr` subcommand into a validated <see cref="TldrWindowResolution"/>.

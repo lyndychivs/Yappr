@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using Yappr;
 using Yappr.Discord.Commands;
-using Yappr.Models;
+using Yappr.Models.Dto;
 
 /// <summary>
 /// Exercises <see cref="TldrSlashCommand.BuildResponseContent"/>, the `/tldr` command's success/failure response

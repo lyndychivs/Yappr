@@ -11,7 +11,9 @@ using Moq;
 
 using NUnit.Framework;
 
-using Yappr.Models;
+using Yappr.Models.Dto;
+using Yappr.Models.Enums;
+using Yappr.Models.Options;
 using Yappr.Summarization;
 
 [TestFixture]

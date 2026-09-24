@@ -44,6 +44,10 @@ jobs:
               if: steps.build.outcome == 'success'
               run: dotnet test --project tests/unit/Yappr.Discord.Unit.Tests/Yappr.Discord.Unit.Tests.csproj --no-build --configuration ${{ env.CONFIGURATION }} -- --report-trx --report-trx-filename Yappr.Discord.Unit.Tests.trx
 
+            - name: Test Yappr.ServiceDefaults.Unit.Tests
+              if: steps.build.outcome == 'success'
+              run: dotnet test --project tests/unit/Yappr.ServiceDefaults.Unit.Tests/Yappr.ServiceDefaults.Unit.Tests.csproj --no-build --configuration ${{ env.CONFIGURATION }} -- --report-trx --report-trx-filename Yappr.ServiceDefaults.Unit.Tests.trx
+
             - name: Test Yappr.Integration.Tests
               if: steps.build.outcome == 'success'
               run: dotnet test --project tests/integration/Yappr.Integration.Tests/Yappr.Integration.Tests.csproj --no-build --configuration ${{ env.CONFIGURATION }} -- --report-trx --report-trx-filename Yappr.Integration.Tests.trx
