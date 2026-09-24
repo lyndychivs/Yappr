@@ -17,4 +17,10 @@ public sealed class EchoTools
     {
         return $"ECHO: {prompt}";
     }
+
+    [McpServerTool(Name = "silent")]
+    [Description("Returns no text content, for exercising McpClientToolInvoker's missing-content error path.")]
+    public static void Silent(string prompt)
+    {
+    }
 }

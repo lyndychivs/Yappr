@@ -1,5 +1,6 @@
 namespace Yappr.Integration.Tests;
 
+using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,5 +37,26 @@ public sealed class McpClientToolInvokerTests
         string result = await invoker.InvokeAsync("hello from the integration test", CancellationToken.None);
 
         Assert.That(result, Is.EqualTo("ECHO: hello from the integration test"));
+    }
+
+    [Test]
+    public void InvokeAsync_ToolReturnsNoTextContent_Throws()
+    {
+        string serverDllPath = Assembly.Load("Yappr.McpTestServer").Location;
+
+        var options = Options.Create(new McpOptions
+        {
+            Transport = McpTransportType.Stdio,
+            Command = "dotnet",
+            Arguments = [serverDllPath],
+            ToolName = "silent",
+        });
+
+        var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), options);
+
+        InvalidOperationException? exception = Assert.ThrowsAsync<InvalidOperationException>(
+            () => invoker.InvokeAsync("hello from the integration test", CancellationToken.None));
+
+        Assert.That(exception!.Message, Is.EqualTo("The MCP tool 'silent' did not return any text content."));
     }
 }
