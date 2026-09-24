@@ -1,7 +1,5 @@
 namespace Yappr.Discord;
 
-using System;
-
 using Microsoft.Extensions.Options;
 
 using Yappr.Models;
@@ -21,8 +19,7 @@ public sealed class McpOptionsValidator : IValidateOptions<McpOptions>
             return ValidateOptionsResult.Success;
         }
 
-        string message = FormattableString.Invariant(
-            $"Mcp:Resilience AttemptTimeout ({resilience.AttemptTimeout}) and TotalRequestTimeout ({resilience.TotalRequestTimeout}) must both exceed Mcp:ServerTimeout ({options.ServerTimeout}), otherwise the client times out before the MCP server does.");
+        string message = $"Mcp:Resilience AttemptTimeout ({resilience.AttemptTimeout}) and TotalRequestTimeout ({resilience.TotalRequestTimeout}) must both exceed Mcp:ServerTimeout ({options.ServerTimeout}), otherwise the client times out before the MCP server does.";
 
         return ValidateOptionsResult.Fail(message);
     }

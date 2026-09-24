@@ -1,7 +1,6 @@
 namespace Yappr.Mcp.Ollama;
 
 using System;
-using System.ComponentModel;
 using System.Globalization;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -22,26 +21,25 @@ using Yappr.Models;
 /// DI, so a typed <c>HttpClient</c> parameter would get an unconfigured instance.
 /// </remarks>
 [McpServerToolType]
-public sealed class OllamaChatTool(IHttpClientFactory httpClientFactory, IOptions<OllamaOptions> options)
+public sealed partial class OllamaChatTool(IHttpClientFactory httpClientFactory, IOptions<OllamaOptions> options)
 {
     /// <summary>
     /// The name of the named <see cref="HttpClient"/> used to reach the Ollama server.
     /// </summary>
     internal const string HttpClientName = nameof(OllamaChatTool);
 
-    private readonly OllamaOptions options = options.Value;
+    private readonly OllamaOptions _options = options.Value;
 
     /// <summary>
-    /// Summarises <paramref name="prompt"/> via the configured Ollama model.
+    /// Summarises the given prompt.
     /// </summary>
     /// <param name="prompt">The prompt to summarize.</param>
     /// <param name="cancellationToken">A token to cancel the call.</param>
     /// <returns>The generated summary text.</returns>
     [McpServerTool(Name = "chat")]
-    [Description("Summarises the given prompt.")]
-    public async Task<string> Chat(string prompt, CancellationToken cancellationToken)
+    public partial async Task<string> Chat(string prompt, CancellationToken cancellationToken)
     {
-        var request = new OllamaGenerateRequest(options.Model, prompt, Stream: false);
+        var request = new OllamaGenerateRequest(_options.Model, prompt, Stream: false);
 
         using HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
 

@@ -17,14 +17,14 @@ using Yappr.Summarization;
 [TestFixture]
 public sealed class TldrOrchestratorTests
 {
-    private readonly IOptions<TldrLimitsOptions> limits = Options.Create(new TldrLimitsOptions());
+    private readonly IOptions<TldrLimitsOptions> _limits = Options.Create(new TldrLimitsOptions());
 
     [Test]
     public async Task RunAsync_InvalidWindow_ReturnsFailureWithoutFetchingOrSummarising()
     {
         var messageFetcher = new Mock<IMessageFetcher>(MockBehavior.Strict);
         var summariser = new Mock<ISummariser>(MockBehavior.Strict);
-        var orchestrator = new TldrOrchestrator(messageFetcher.Object, summariser.Object, limits);
+        var orchestrator = new TldrOrchestrator(messageFetcher.Object, summariser.Object, _limits);
 
         TldrOutcome outcome = await orchestrator.RunAsync(1, TldrWindowKind.Days, 0, CancellationToken.None);
 
@@ -39,7 +39,7 @@ public sealed class TldrOrchestratorTests
             .Setup(f => f.FetchAsync(It.IsAny<ulong>(), It.IsAny<Yappr.Windowing.TldrWindowResolution>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((IReadOnlyList<ChannelMessage>)[]);
         var summariser = new Mock<ISummariser>(MockBehavior.Strict);
-        var orchestrator = new TldrOrchestrator(messageFetcher.Object, summariser.Object, limits);
+        var orchestrator = new TldrOrchestrator(messageFetcher.Object, summariser.Object, _limits);
 
         TldrOutcome outcome = await orchestrator.RunAsync(1, TldrWindowKind.Messages, 10, CancellationToken.None);
 
@@ -65,7 +65,7 @@ public sealed class TldrOrchestratorTests
             .Setup(s => s.SummariseAsync(messages, It.IsAny<CancellationToken>()))
             .ReturnsAsync(expected);
 
-        var orchestrator = new TldrOrchestrator(messageFetcher.Object, summariser.Object, limits);
+        var orchestrator = new TldrOrchestrator(messageFetcher.Object, summariser.Object, _limits);
 
         TldrOutcome outcome = await orchestrator.RunAsync(1, TldrWindowKind.Messages, 10, CancellationToken.None);
 

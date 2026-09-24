@@ -10,7 +10,7 @@ using Yappr.Windowing;
 [TestFixture]
 public sealed class TldrWindowResolverTests
 {
-    private readonly TldrLimitsOptions limits = new()
+    private readonly TldrLimitsOptions _limits = new()
     {
         MaxDays = 30,
         MaxHours = 720,
@@ -21,7 +21,7 @@ public sealed class TldrWindowResolverTests
     [TestCase(-1)]
     public void Resolve_NonPositiveValue_IsInvalid(int value)
     {
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, value, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, value, _limits);
 
         using (Assert.EnterMultipleScope())
         {
@@ -35,7 +35,7 @@ public sealed class TldrWindowResolverTests
     {
         DateTimeOffset before = DateTimeOffset.UtcNow.AddDays(-3);
 
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, 3, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, 3, _limits);
 
         using (Assert.EnterMultipleScope())
         {
@@ -49,7 +49,7 @@ public sealed class TldrWindowResolverTests
     [Test]
     public void Resolve_DaysAboveLimit_IsInvalid()
     {
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, limits.MaxDays + 1, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, _limits.MaxDays + 1, _limits);
 
         using (Assert.EnterMultipleScope())
         {
@@ -61,7 +61,7 @@ public sealed class TldrWindowResolverTests
     [Test]
     public void Resolve_DaysAtLimit_ReturnsTimeCutoff()
     {
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, limits.MaxDays, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Days, _limits.MaxDays, _limits);
 
         Assert.That(result.IsValid, Is.True);
     }
@@ -69,7 +69,7 @@ public sealed class TldrWindowResolverTests
     [Test]
     public void Resolve_HoursAboveLimit_IsInvalid()
     {
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Hours, limits.MaxHours + 1, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Hours, _limits.MaxHours + 1, _limits);
 
         using (Assert.EnterMultipleScope())
         {
@@ -81,9 +81,9 @@ public sealed class TldrWindowResolverTests
     [Test]
     public void Resolve_HoursAtLimit_ReturnsTimeCutoff()
     {
-        DateTimeOffset before = DateTimeOffset.UtcNow.AddHours(-limits.MaxHours);
+        DateTimeOffset before = DateTimeOffset.UtcNow.AddHours(-_limits.MaxHours);
 
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Hours, limits.MaxHours, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Hours, _limits.MaxHours, _limits);
 
         using (Assert.EnterMultipleScope())
         {
@@ -96,7 +96,7 @@ public sealed class TldrWindowResolverTests
     [Test]
     public void Resolve_MessagesWithinLimit_ReturnsMessageLimit()
     {
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, 50, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, 50, _limits);
 
         using (Assert.EnterMultipleScope())
         {
@@ -109,7 +109,7 @@ public sealed class TldrWindowResolverTests
     [Test]
     public void Resolve_MessagesAboveLimit_IsInvalid()
     {
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, limits.MaxMessages + 1, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, _limits.MaxMessages + 1, _limits);
 
         using (Assert.EnterMultipleScope())
         {
@@ -121,12 +121,12 @@ public sealed class TldrWindowResolverTests
     [Test]
     public void Resolve_MessagesAtLimit_ReturnsMessageLimit()
     {
-        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, limits.MaxMessages, limits);
+        TldrWindowResolution result = TldrWindowResolver.Resolve(TldrWindowKind.Messages, _limits.MaxMessages, _limits);
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.IsValid, Is.True);
-            Assert.That(result.MessageLimit, Is.EqualTo(limits.MaxMessages));
+            Assert.That(result.MessageLimit, Is.EqualTo(_limits.MaxMessages));
         }
     }
 

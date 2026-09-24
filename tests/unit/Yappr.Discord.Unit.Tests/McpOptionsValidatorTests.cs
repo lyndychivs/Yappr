@@ -11,12 +11,12 @@ using Yappr.Models;
 [TestFixture]
 public sealed class McpOptionsValidatorTests
 {
-    private readonly McpOptionsValidator validator = new();
+    private readonly McpOptionsValidator _validator = new();
 
     [Test]
     public void Validate_Defaults_Succeeds()
     {
-        Assert.That(validator.Validate(name: null, new McpOptions()).Succeeded, Is.True);
+        Assert.That(_validator.Validate(name: null, new McpOptions()).Succeeded, Is.True);
     }
 
     [Test]
@@ -24,7 +24,7 @@ public sealed class McpOptionsValidatorTests
     {
         var options = new McpOptions { ServerTimeout = TimeSpan.FromMinutes(10) };
 
-        ValidateOptionsResult result = validator.Validate(name: null, options);
+        ValidateOptionsResult result = _validator.Validate(name: null, options);
 
         using (Assert.EnterMultipleScope())
         {
@@ -39,7 +39,7 @@ public sealed class McpOptionsValidatorTests
         var options = new McpOptions();
         options.Resilience.AttemptTimeout = options.ServerTimeout;
 
-        Assert.That(validator.Validate(name: null, options).Failed, Is.True);
+        Assert.That(_validator.Validate(name: null, options).Failed, Is.True);
     }
 
     [Test]
@@ -48,7 +48,7 @@ public sealed class McpOptionsValidatorTests
         var options = new McpOptions();
         options.Resilience.TotalRequestTimeout = options.ServerTimeout;
 
-        Assert.That(validator.Validate(name: null, options).Failed, Is.True);
+        Assert.That(_validator.Validate(name: null, options).Failed, Is.True);
     }
 
     [Test]
@@ -58,6 +58,6 @@ public sealed class McpOptionsValidatorTests
         options.Resilience.AttemptTimeout = TimeSpan.FromMinutes(11);
         options.Resilience.TotalRequestTimeout = TimeSpan.FromMinutes(11);
 
-        Assert.That(validator.Validate(name: null, options).Succeeded, Is.True);
+        Assert.That(_validator.Validate(name: null, options).Succeeded, Is.True);
     }
 }
