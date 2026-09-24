@@ -14,8 +14,18 @@ internal sealed class StubOllamaServer : IDisposable
 
     private readonly CancellationTokenSource cts = new();
 
-    public StubOllamaServer()
+    private readonly int statusCode;
+
+    private readonly string responseBody;
+
+    private readonly TimeSpan delay;
+
+    public StubOllamaServer(int statusCode = 200, string responseBody = """{"response":"stubbed summary"}""", TimeSpan delay = default)
     {
+        this.statusCode = statusCode;
+        this.responseBody = responseBody;
+        this.delay = delay;
+
         int port = GetFreeTcpPort();
         Address = string.Create(CultureInfo.InvariantCulture, $"http://127.0.0.1:{port}");
         listener.Prefixes.Add($"{Address}/");
@@ -46,7 +56,14 @@ internal sealed class StubOllamaServer : IDisposable
             while (!cts.IsCancellationRequested)
             {
                 HttpListenerContext context = await listener.GetContextAsync().WaitAsync(cts.Token);
-                byte[] buffer = Encoding.UTF8.GetBytes("""{"response":"stubbed summary"}""");
+
+                if (delay > TimeSpan.Zero)
+                {
+                    await Task.Delay(delay, cts.Token);
+                }
+
+                byte[] buffer = Encoding.UTF8.GetBytes(responseBody);
+                context.Response.StatusCode = statusCode;
                 context.Response.ContentType = "application/json";
                 context.Response.ContentLength64 = buffer.Length;
                 await context.Response.OutputStream.WriteAsync(buffer, cts.Token);
