@@ -10,5 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\src\Yappr.Mcp.Ollama\Yappr.Mcp.Ollama.csproj" />
+        <ProjectReference Include="..\..\..\src\Yappr\Yappr.csproj" />
+        <ProjectReference Include="..\..\..\src\Yappr.Models\Yappr.Models.csproj" />
     </ItemGroup>
 </Project>
