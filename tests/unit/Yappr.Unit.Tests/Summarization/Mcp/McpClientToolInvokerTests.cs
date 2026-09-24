@@ -224,4 +224,74 @@ public sealed class McpClientToolInvokerTests
             Assert.That(arguments.ContainsKey("PROMPT"), Is.False, "the key comparer must be ordinal (case-sensitive), not case-insensitive");
         }
     }
+
+    [Test]
+    public void Constructor_NullHttpClientFactory_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => new McpClientToolInvoker(null!, Options.Create(new McpOptions())),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("httpClientFactory"));
+    }
+
+    [Test]
+    public void Constructor_NullOptions_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => new McpClientToolInvoker(new StubHttpClientFactory(), null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("options"));
+    }
+
+    [Test]
+    public void Constructor_NullCallTool_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => new McpClientToolInvoker(new StubHttpClientFactory(), Options.Create(new McpOptions()), null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("callTool"));
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("   ")]
+    public void InvokeAsync_NullOrWhiteSpacePrompt_ThrowsArgumentExceptionBeforeCreatingTransport(string? prompt)
+    {
+        // Command is unset, so reaching CreateTransport would throw InvalidOperationException instead.
+        var invoker = new McpClientToolInvoker(
+            new StubHttpClientFactory(),
+            Options.Create(new McpOptions { Transport = McpTransportType.Stdio, Command = null }),
+            (_, _, _, _) => throw new AssertionException("The tool must not be called for an invalid prompt."));
+
+        Assert.That(
+            async () => await invoker.InvokeAsync(prompt!, CancellationToken.None),
+            Throws.InstanceOf<ArgumentException>().With.Property(nameof(ArgumentException.ParamName)).EqualTo("prompt"));
+    }
+
+    [Test]
+    public void ExtractText_NullResult_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => McpClientToolInvoker.ExtractText(null!, "chat"),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("result"));
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("   ")]
+    public void ExtractText_NullOrWhiteSpaceToolName_ThrowsArgumentException(string? toolName)
+    {
+        var result = new CallToolResult { Content = [new TextContentBlock { Text = "hello" }] };
+
+        Assert.That(
+            () => McpClientToolInvoker.ExtractText(result, toolName!),
+            Throws.InstanceOf<ArgumentException>().With.Property(nameof(ArgumentException.ParamName)).EqualTo("toolName"));
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("   ")]
+    public void BuildArguments_NullOrWhiteSpacePrompt_ThrowsArgumentException(string? prompt)
+    {
+        Assert.That(
+            () => McpClientToolInvoker.BuildArguments(prompt!),
+            Throws.InstanceOf<ArgumentException>().With.Property(nameof(ArgumentException.ParamName)).EqualTo("prompt"));
+    }
 }

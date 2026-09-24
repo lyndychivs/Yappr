@@ -1,5 +1,7 @@
 namespace Yappr.Discord.Validation;
 
+using System;
+
 using Microsoft.Extensions.Options;
 
 using Yappr.Models.Options;
@@ -13,6 +15,8 @@ public sealed class McpOptionsValidator : IValidateOptions<McpOptions>
     /// <inheritdoc />
     public ValidateOptionsResult Validate(string? name, McpOptions options)
     {
+        ArgumentNullException.ThrowIfNull(options);
+
         McpResilienceOptions resilience = options.Resilience;
         if (resilience.AttemptTimeout > options.ServerTimeout && resilience.TotalRequestTimeout > options.ServerTimeout)
         {

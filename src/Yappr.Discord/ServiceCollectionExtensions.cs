@@ -1,5 +1,7 @@
 namespace Yappr.Discord;
 
+using System;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -20,6 +22,8 @@ public static class ServiceCollectionExtensions
     /// <returns>The same service collection, for chaining.</returns>
     public static IServiceCollection AddMcpHttpClient(this IServiceCollection services)
     {
+        ArgumentNullException.ThrowIfNull(services);
+
         services.AddHttpClient(McpClientToolInvoker.HttpClientName)
             .AddStandardResilienceHandler()
             .ConfigureTimeouts(serviceProvider => serviceProvider.GetRequiredService<IOptions<McpOptions>>().Value.Resilience);

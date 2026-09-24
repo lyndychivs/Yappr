@@ -1,5 +1,7 @@
 namespace Yappr;
 
+using System;
+
 using Yappr.Models.Dto;
 
 /// <summary>
@@ -36,6 +38,8 @@ public sealed record TldrOutcome
     /// <returns>A successful <see cref="TldrOutcome"/>.</returns>
     public static TldrOutcome Success(SummaryResult result)
     {
+        ArgumentNullException.ThrowIfNull(result);
+
         return new(isSuccess: true, error: null, result);
     }
 
@@ -46,6 +50,8 @@ public sealed record TldrOutcome
     /// <returns>A failed <see cref="TldrOutcome"/>.</returns>
     public static TldrOutcome Failure(string error)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(error);
+
         return new(isSuccess: false, error, result: null);
     }
 }

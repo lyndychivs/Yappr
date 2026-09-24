@@ -53,6 +53,8 @@ public sealed record TldrWindowResolution
     /// <returns>A valid <see cref="TldrWindowResolution"/>.</returns>
     public static TldrWindowResolution ForMessageLimit(int messageLimit)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(messageLimit);
+
         return new(isValid: true, validationError: null, sinceUtc: null, messageLimit);
     }
 
@@ -63,6 +65,8 @@ public sealed record TldrWindowResolution
     /// <returns>An invalid <see cref="TldrWindowResolution"/>.</returns>
     public static TldrWindowResolution Invalid(string validationError)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(validationError);
+
         return new(isValid: false, validationError, sinceUtc: null, messageLimit: null);
     }
 }

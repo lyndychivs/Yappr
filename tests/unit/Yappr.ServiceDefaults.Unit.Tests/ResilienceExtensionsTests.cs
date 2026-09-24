@@ -51,6 +51,24 @@ public sealed class ResilienceExtensionsTests
         Assert.That(Apply(resilience).TotalRequestTimeout.Timeout, Is.EqualTo(TimeSpan.FromMinutes(20)));
     }
 
+    [Test]
+    public void ConfigureTimeouts_NullBuilder_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => ResilienceExtensions.ConfigureTimeouts(null!, _ => new McpResilienceOptions()),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("builder"));
+    }
+
+    [Test]
+    public void ConfigureTimeouts_NullSettings_ThrowsArgumentNullException()
+    {
+        IHttpStandardResiliencePipelineBuilder builder = new ServiceCollection().AddHttpClient("test").AddStandardResilienceHandler();
+
+        Assert.That(
+            () => builder.ConfigureTimeouts(null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("settings"));
+    }
+
     /// <summary>
     /// Applies <paramref name="resilience"/> and captures the resulting options by chaining a second
     /// <c>Configure</c> on the same builder, so the test does not depend on the handler's options name.

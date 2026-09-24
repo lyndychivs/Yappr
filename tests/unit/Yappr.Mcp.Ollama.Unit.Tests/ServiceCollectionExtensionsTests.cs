@@ -53,6 +53,14 @@ public sealed class ServiceCollectionExtensionsTests
         }
     }
 
+    [Test]
+    public void AddOllamaHttpClient_NullServices_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => ServiceCollectionExtensions.AddOllamaHttpClient(null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("services"));
+    }
+
     private static ServiceProvider BuildProvider(Dictionary<string, string?> configuration)
     {
         IConfiguration config = new ConfigurationBuilder().AddInMemoryCollection(configuration).Build();

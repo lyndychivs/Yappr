@@ -1,5 +1,6 @@
 namespace Yappr;
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,11 +17,34 @@ using Yappr.Windowing;
 /// Entry point for `/tldr`: validates the requested window, fetches matching channel history, and hands it
 /// to the configured <see cref="ISummariser"/>.
 /// </summary>
-public sealed class TldrOrchestrator(
-    IMessageFetcher messageFetcher,
-    ISummariser summariser,
-    IOptions<TldrLimitsOptions> limits)
+public sealed class TldrOrchestrator
 {
+    private readonly IMessageFetcher _messageFetcher;
+
+    private readonly ISummariser _summariser;
+
+    private readonly TldrLimitsOptions _limits;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TldrOrchestrator"/> class.
+    /// </summary>
+    /// <param name="messageFetcher">Fetches the channel messages within the requested window.</param>
+    /// <param name="summariser">Summarises the fetched messages.</param>
+    /// <param name="limits">The configured caps on the requested window.</param>
+    public TldrOrchestrator(
+        IMessageFetcher messageFetcher,
+        ISummariser summariser,
+        IOptions<TldrLimitsOptions> limits)
+    {
+        ArgumentNullException.ThrowIfNull(messageFetcher);
+        ArgumentNullException.ThrowIfNull(summariser);
+        ArgumentNullException.ThrowIfNull(limits);
+
+        _messageFetcher = messageFetcher;
+        _summariser = summariser;
+        _limits = limits.Value;
+    }
+
     /// <summary>
     /// Runs a `/tldr` request end to end.
     /// </summary>
@@ -35,19 +59,19 @@ public sealed class TldrOrchestrator(
         int value,
         CancellationToken cancellationToken)
     {
-        TldrWindowResolution window = TldrWindowResolver.Resolve(kind, value, limits.Value);
+        TldrWindowResolution window = TldrWindowResolver.Resolve(kind, value, _limits);
         if (!window.IsValid)
         {
             return TldrOutcome.Failure(window.ValidationError!);
         }
 
-        IReadOnlyList<ChannelMessage> messages = await messageFetcher.FetchAsync(channelId, window, cancellationToken);
+        IReadOnlyList<ChannelMessage> messages = await _messageFetcher.FetchAsync(channelId, window, cancellationToken);
         if (messages.Count == 0)
         {
             return TldrOutcome.Failure("No messages found in that window.");
         }
 
-        SummaryResult result = await summariser.SummariseAsync(messages, cancellationToken);
+        SummaryResult result = await _summariser.SummariseAsync(messages, cancellationToken);
         return TldrOutcome.Success(result);
     }
 }

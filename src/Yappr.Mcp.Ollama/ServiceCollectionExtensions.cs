@@ -22,6 +22,8 @@ public static class ServiceCollectionExtensions
     /// <returns>The same service collection, for chaining.</returns>
     public static IServiceCollection AddOllamaHttpClient(this IServiceCollection services)
     {
+        ArgumentNullException.ThrowIfNull(services);
+
         services.AddHttpClient(OllamaChatTool.HttpClientName, (serviceProvider, client) =>
             {
                 OllamaOptions options = serviceProvider.GetRequiredService<IOptions<OllamaOptions>>().Value;

@@ -15,16 +15,31 @@ using Yappr.Models.Enums;
 /// <summary>
 /// The `/tldr` slash command and its `days`/`hours`/`messages` subcommands.
 /// </summary>
-/// <param name="logger">The logger to record received interactions and failures with.</param>
-/// <param name="orchestrator">Runs the `/tldr` request.</param>
 [SlashCommand("tldr", "Summarise recent channel yap")]
-public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, TldrOrchestrator orchestrator)
-    : ApplicationCommandModule<ApplicationCommandContext>
+public sealed partial class TldrSlashCommand : ApplicationCommandModule<ApplicationCommandContext>
 {
     /// <summary>
     /// The response content used when <see cref="RunAsync"/> catches an unexpected exception.
     /// </summary>
     private const string GenericFailureContent = "⚠️ Something went wrong while sniffing the yap, Please try again.";
+
+    private readonly ILogger<TldrSlashCommand> _logger;
+
+    private readonly TldrOrchestrator _orchestrator;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TldrSlashCommand"/> class.
+    /// </summary>
+    /// <param name="logger">The logger to record received interactions and failures with.</param>
+    /// <param name="orchestrator">Runs the `/tldr` request.</param>
+    public TldrSlashCommand(ILogger<TldrSlashCommand> logger, TldrOrchestrator orchestrator)
+    {
+        ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(orchestrator);
+
+        _logger = logger;
+        _orchestrator = orchestrator;
+    }
 
     /// <summary>
     /// Summarises the last <paramref name="count"/> days of the channel.
@@ -72,6 +87,8 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
     /// <returns>The summary, or the user-facing failure reason, formatted for a Discord message.</returns>
     internal static string BuildResponseContent(TldrOutcome outcome)
     {
+        ArgumentNullException.ThrowIfNull(outcome);
+
         return outcome.IsSuccess
             ? string.Create(
                 CultureInfo.InvariantCulture,
@@ -104,7 +121,7 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
 
     private async Task RunAsync(TldrWindowKind kind, int count)
     {
-        LogReceivedInteraction(logger, kind, count, Context.User.Username, Context.User.Id);
+        LogReceivedInteraction(_logger, kind, count, Context.User.Username, Context.User.Id);
 
         await RespondAsync(InteractionCallback.Message(new InteractionMessageProperties
         {
@@ -114,13 +131,13 @@ public sealed partial class TldrSlashCommand(ILogger<TldrSlashCommand> logger, T
         string content;
         try
         {
-            TldrOutcome outcome = await orchestrator.RunAsync(Context.Channel.Id, kind, count, CancellationToken.None);
+            TldrOutcome outcome = await _orchestrator.RunAsync(Context.Channel.Id, kind, count, CancellationToken.None);
 
             content = BuildResponseContent(outcome);
         }
         catch (Exception exception)
         {
-            LogSummarisationFailed(logger, exception, kind, count, Context.User.Username, Context.User.Id);
+            LogSummarisationFailed(_logger, exception, kind, count, Context.User.Username, Context.User.Id);
             content = GenericFailureContent;
         }
 

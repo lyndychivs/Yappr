@@ -1,5 +1,6 @@
 namespace Yappr.Summarization;
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -24,6 +25,8 @@ public static class TldrPromptBuilder
     /// <returns>The prompt to send to the summarization tool.</returns>
     public static string Build(IReadOnlyList<ChannelMessage> messages)
     {
+        ArgumentNullException.ThrowIfNull(messages);
+
         var lines = new List<string>(messages.Count);
         foreach (ChannelMessage message in messages)
         {
