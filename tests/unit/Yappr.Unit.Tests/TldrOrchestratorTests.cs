@@ -77,4 +77,35 @@ public sealed class TldrOrchestratorTests
             Assert.That(outcome.Result, Is.EqualTo(expected));
         }
     }
+
+    [Test]
+    public void Constructor_NullMessageFetcher_ThrowsArgumentNullException()
+    {
+        var summariser = new Mock<ISummariser>(MockBehavior.Strict);
+
+        Assert.That(
+            () => new TldrOrchestrator(null!, summariser.Object, _limits),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("messageFetcher"));
+    }
+
+    [Test]
+    public void Constructor_NullSummariser_ThrowsArgumentNullException()
+    {
+        var messageFetcher = new Mock<IMessageFetcher>(MockBehavior.Strict);
+
+        Assert.That(
+            () => new TldrOrchestrator(messageFetcher.Object, null!, _limits),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("summariser"));
+    }
+
+    [Test]
+    public void Constructor_NullLimits_ThrowsArgumentNullException()
+    {
+        var messageFetcher = new Mock<IMessageFetcher>(MockBehavior.Strict);
+        var summariser = new Mock<ISummariser>(MockBehavior.Strict);
+
+        Assert.That(
+            () => new TldrOrchestrator(messageFetcher.Object, summariser.Object, null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("limits"));
+    }
 }

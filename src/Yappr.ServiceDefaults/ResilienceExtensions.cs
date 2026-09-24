@@ -29,6 +29,9 @@ public static class ResilienceExtensions
         this IHttpStandardResiliencePipelineBuilder builder,
         Func<IServiceProvider, McpResilienceOptions> settings)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(settings);
+
         return builder.Configure((options, serviceProvider) =>
         {
             McpResilienceOptions resilience = settings(serviceProvider);

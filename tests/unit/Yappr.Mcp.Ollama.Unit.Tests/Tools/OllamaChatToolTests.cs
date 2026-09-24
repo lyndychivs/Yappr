@@ -78,6 +78,38 @@ public sealed class OllamaChatToolTests
         Assert.That(exception.Message, Is.EqualTo("Ollama did not return a response."));
     }
 
+    [Test]
+    public void Constructor_NullHttpClientFactory_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => new OllamaChatTool(null!, Options.Create(new OllamaOptions())),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("httpClientFactory"));
+    }
+
+    [Test]
+    public void Constructor_NullOptions_ThrowsArgumentNullException()
+    {
+        using var httpClient = new HttpClient();
+
+        Assert.That(
+            () => new OllamaChatTool(new StubHttpClientFactory(httpClient), null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("options"));
+    }
+
+    [TestCase(null)]
+    [TestCase("")]
+    [TestCase("   ")]
+    public void Chat_NullOrWhiteSpacePrompt_ThrowsArgumentException(string? prompt)
+    {
+        var handler = new StubHttpMessageHandler(_ => throw new AssertionException("Ollama must not be called for an invalid prompt."));
+
+        OllamaChatTool tool = CreateTool(handler, model: "llama3.1:8b", endpoint: "http://ollama:11434");
+
+        Assert.That(
+            async () => await tool.Chat(prompt!, CancellationToken.None),
+            Throws.InstanceOf<ArgumentException>().With.Property(nameof(ArgumentException.ParamName)).EqualTo("prompt"));
+    }
+
     private static OllamaChatTool CreateTool(HttpMessageHandler handler, string model, string endpoint)
     {
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri(endpoint) };

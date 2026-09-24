@@ -61,4 +61,12 @@ public sealed class McpOptionsValidatorTests
 
         Assert.That(_validator.Validate(name: null, options).Succeeded, Is.True);
     }
+
+    [Test]
+    public void Validate_NullOptions_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => _validator.Validate(name: null, null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("options"));
+    }
 }

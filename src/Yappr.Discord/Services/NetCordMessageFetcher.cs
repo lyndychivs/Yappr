@@ -17,14 +17,27 @@ using Yappr.Windowing;
 /// Fetches channel history from Discord, walking backwards from the newest message until the count or time
 /// cutoff is met.
 /// </summary>
-public sealed class NetCordMessageFetcher(GatewayClient gatewayClient) : IMessageFetcher
+public sealed class NetCordMessageFetcher : IMessageFetcher
 {
+    private readonly GatewayClient _gatewayClient;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NetCordMessageFetcher"/> class.
+    /// </summary>
+    /// <param name="gatewayClient">The Discord gateway client whose REST client fetches channel history.</param>
+    public NetCordMessageFetcher(GatewayClient gatewayClient)
+    {
+        ArgumentNullException.ThrowIfNull(gatewayClient);
+
+        _gatewayClient = gatewayClient;
+    }
+
     /// <inheritdoc/>
     public async Task<IReadOnlyList<ChannelMessage>> FetchAsync(ulong channelId, TldrWindowResolution window, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(window);
 
-        Channel channel = await gatewayClient.Rest.GetChannelAsync(channelId, cancellationToken: cancellationToken);
+        Channel channel = await _gatewayClient.Rest.GetChannelAsync(channelId, cancellationToken: cancellationToken);
         if (channel is not TextChannel textChannel)
         {
             return [];

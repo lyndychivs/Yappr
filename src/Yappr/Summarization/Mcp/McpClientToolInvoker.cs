@@ -51,6 +51,10 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
     /// <param name="callTool">The function used to connect and call the tool.</param>
     internal McpClientToolInvoker(IHttpClientFactory httpClientFactory, IOptions<McpOptions> options, CallToolFunc callTool)
     {
+        ArgumentNullException.ThrowIfNull(httpClientFactory);
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(callTool);
+
         _httpClientFactory = httpClientFactory;
         _mcpOptions = options.Value;
         _callToolFunc = callTool;
@@ -73,6 +77,8 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
     /// <inheritdoc/>
     public async Task<string> InvokeAsync(string prompt, CancellationToken cancellationToken)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(prompt);
+
         IClientTransport transport = CreateTransport();
 
         IReadOnlyDictionary<string, object?> arguments = BuildArguments(prompt);
@@ -91,6 +97,9 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
     /// <exception cref="InvalidOperationException"><paramref name="result"/> contains no text content.</exception>
     internal static string ExtractText(CallToolResult result, string toolName)
     {
+        ArgumentNullException.ThrowIfNull(result);
+        ArgumentException.ThrowIfNullOrWhiteSpace(toolName);
+
         TextContentBlock? textBlock = result.Content.OfType<TextContentBlock>().FirstOrDefault();
 
         return textBlock is null
@@ -105,6 +114,8 @@ public sealed class McpClientToolInvoker : IMcpToolInvoker
     /// <returns>The tool call arguments.</returns>
     internal static IReadOnlyDictionary<string, object?> BuildArguments(string prompt)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(prompt);
+
         return new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = prompt };
     }
 

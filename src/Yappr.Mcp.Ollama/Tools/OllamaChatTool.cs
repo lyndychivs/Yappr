@@ -22,14 +22,30 @@ using Yappr.Models.Options;
 /// DI, so a typed <c>HttpClient</c> parameter would get an unconfigured instance.
 /// </remarks>
 [McpServerToolType]
-public sealed partial class OllamaChatTool(IHttpClientFactory httpClientFactory, IOptions<OllamaOptions> options)
+public sealed partial class OllamaChatTool
 {
     /// <summary>
     /// The name of the named <see cref="HttpClient"/> used to reach the Ollama server.
     /// </summary>
     internal const string HttpClientName = nameof(OllamaChatTool);
 
-    private readonly OllamaOptions _options = options.Value;
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    private readonly OllamaOptions _options;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OllamaChatTool"/> class.
+    /// </summary>
+    /// <param name="httpClientFactory">The factory used to create the named <see cref="HttpClient"/> for Ollama.</param>
+    /// <param name="options">The Ollama options to generate with.</param>
+    public OllamaChatTool(IHttpClientFactory httpClientFactory, IOptions<OllamaOptions> options)
+    {
+        ArgumentNullException.ThrowIfNull(httpClientFactory);
+        ArgumentNullException.ThrowIfNull(options);
+
+        _httpClientFactory = httpClientFactory;
+        _options = options.Value;
+    }
 
     /// <summary>
     /// Summarises the given prompt.
@@ -40,9 +56,11 @@ public sealed partial class OllamaChatTool(IHttpClientFactory httpClientFactory,
     [McpServerTool(Name = "chat")]
     public partial async Task<string> Chat(string prompt, CancellationToken cancellationToken)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(prompt);
+
         var request = new OllamaGenerateRequest(_options.Model, prompt, Stream: false);
 
-        using HttpClient httpClient = httpClientFactory.CreateClient(HttpClientName);
+        using HttpClient httpClient = _httpClientFactory.CreateClient(HttpClientName);
 
         using HttpResponseMessage response = await httpClient
             .PostAsJsonAsync("/api/generate", request, cancellationToken)

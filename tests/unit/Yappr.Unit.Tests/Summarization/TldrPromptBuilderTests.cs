@@ -116,6 +116,14 @@ public sealed class TldrPromptBuilderTests
         }
     }
 
+    [Test]
+    public void Build_NullMessages_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => TldrPromptBuilder.Build(null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("messages"));
+    }
+
     private static ChannelMessage MessageWithRenderedLineLength(string author, char fill, int renderedLineLength, DateTimeOffset timestamp)
     {
         string prefix = string.Create(CultureInfo.InvariantCulture, $"[{timestamp:yyyy-MM-dd HH:mm} UTC] {author}: ");

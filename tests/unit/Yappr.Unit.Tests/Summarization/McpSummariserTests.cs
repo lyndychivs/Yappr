@@ -59,4 +59,23 @@ public sealed class McpSummariserTests
 
         Assert.That(capturedPrompt, Does.Contain("Unique message content"));
     }
+
+    [Test]
+    public void Constructor_NullToolInvoker_ThrowsArgumentNullException()
+    {
+        Assert.That(
+            () => new McpSummariser(null!),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("toolInvoker"));
+    }
+
+    [Test]
+    public void SummariseAsync_NullMessages_ThrowsArgumentNullException()
+    {
+        var toolInvoker = new Mock<IMcpToolInvoker>(MockBehavior.Strict);
+        var summariser = new McpSummariser(toolInvoker.Object);
+
+        Assert.That(
+            async () => await summariser.SummariseAsync(null!, CancellationToken.None),
+            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("messages"));
+    }
 }
