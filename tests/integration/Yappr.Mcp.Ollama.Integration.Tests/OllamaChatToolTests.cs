@@ -96,6 +96,32 @@ public sealed class OllamaChatToolTests
             });
     }
 
+    [Test]
+    public async Task CallTool_Chat_OllamaTransientlyFails_ResiliencePipelineRetriesAndSucceeds()
+    {
+        // Fails the first two requests with 503 (a retried transient status), then succeeds - proving the
+        // standard resilience handler actually retries over a real socket and recovers, not just that it
+        // eventually gives up (the other tests here only exercise the give-up path).
+        using var stubOllama = new StubOllamaServer(failuresBeforeSuccess: 2);
+
+        await WithMcpClientAsync(
+            new Dictionary<string, string?>(StringComparer.Ordinal) { ["Ollama__Endpoint"] = stubOllama.Address },
+            async client =>
+            {
+                CallToolResult result = await CallChatAsync(client);
+
+                TextContentBlock? textBlock = result.Content.OfType<TextContentBlock>().FirstOrDefault();
+
+                using (Assert.EnterMultipleScope())
+                {
+                    Assert.That(result.IsError, Is.Not.True);
+                    Assert.That(textBlock, Is.Not.Null);
+                    Assert.That(textBlock!.Text, Is.EqualTo("stubbed summary"));
+                    Assert.That(stubOllama.RequestCount, Is.EqualTo(3));
+                }
+            });
+    }
+
     private static async Task<CallToolResult> CallChatAsync(McpClient client)
     {
         var arguments = new Dictionary<string, object?>(StringComparer.Ordinal) { ["prompt"] = "summarise this" };

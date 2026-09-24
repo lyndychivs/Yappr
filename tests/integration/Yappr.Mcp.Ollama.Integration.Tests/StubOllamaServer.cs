@@ -20,11 +20,20 @@ internal sealed class StubOllamaServer : IDisposable
 
     private readonly TimeSpan delay;
 
-    public StubOllamaServer(int statusCode = 200, string responseBody = """{"response":"stubbed summary"}""", TimeSpan delay = default)
+    private readonly int failuresBeforeSuccess;
+
+    private int requestCount;
+
+    public StubOllamaServer(
+        int statusCode = 200,
+        string responseBody = """{"response":"stubbed summary"}""",
+        TimeSpan delay = default,
+        int failuresBeforeSuccess = 0)
     {
         this.statusCode = statusCode;
         this.responseBody = responseBody;
         this.delay = delay;
+        this.failuresBeforeSuccess = failuresBeforeSuccess;
 
         int port = GetFreeTcpPort();
         Address = string.Create(CultureInfo.InvariantCulture, $"http://127.0.0.1:{port}");
@@ -34,6 +43,11 @@ internal sealed class StubOllamaServer : IDisposable
     }
 
     public string Address { get; }
+
+    /// <summary>
+    /// Gets the number of requests received so far.
+    /// </summary>
+    public int RequestCount => requestCount;
 
     public void Dispose()
     {
@@ -56,14 +70,17 @@ internal sealed class StubOllamaServer : IDisposable
             while (!cts.IsCancellationRequested)
             {
                 HttpListenerContext context = await listener.GetContextAsync().WaitAsync(cts.Token);
+                int requestNumber = Interlocked.Increment(ref requestCount);
 
                 if (delay > TimeSpan.Zero)
                 {
                     await Task.Delay(delay, cts.Token);
                 }
 
-                byte[] buffer = Encoding.UTF8.GetBytes(responseBody);
-                context.Response.StatusCode = statusCode;
+                bool isTransientFailure = requestNumber <= failuresBeforeSuccess;
+                string body = isTransientFailure ? """{"error":"temporarily unavailable"}""" : responseBody;
+                byte[] buffer = Encoding.UTF8.GetBytes(body);
+                context.Response.StatusCode = isTransientFailure ? 503 : statusCode;
                 context.Response.ContentType = "application/json";
                 context.Response.ContentLength64 = buffer.Length;
                 await context.Response.OutputStream.WriteAsync(buffer, cts.Token);
