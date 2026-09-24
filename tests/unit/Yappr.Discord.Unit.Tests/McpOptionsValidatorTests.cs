@@ -16,7 +16,7 @@ public sealed class McpOptionsValidatorTests
     [Test]
     public void Validate_Defaults_Succeeds()
     {
-        Assert.That(this.validator.Validate(null, new McpOptions()).Succeeded, Is.True);
+        Assert.That(validator.Validate(name: null, new McpOptions()).Succeeded, Is.True);
     }
 
     [Test]
@@ -24,10 +24,13 @@ public sealed class McpOptionsValidatorTests
     {
         var options = new McpOptions { ServerTimeout = TimeSpan.FromMinutes(10) };
 
-        ValidateOptionsResult result = this.validator.Validate(null, options);
+        ValidateOptionsResult result = validator.Validate(name: null, options);
 
-        Assert.That(result.Failed, Is.True);
-        Assert.That(result.FailureMessage, Does.Contain("Mcp:ServerTimeout"));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Failed, Is.True);
+            Assert.That(result.FailureMessage, Does.Contain("Mcp:ServerTimeout"));
+        }
     }
 
     [Test]
@@ -36,7 +39,7 @@ public sealed class McpOptionsValidatorTests
         var options = new McpOptions();
         options.Resilience.AttemptTimeout = options.ServerTimeout;
 
-        Assert.That(this.validator.Validate(null, options).Failed, Is.True);
+        Assert.That(validator.Validate(name: null, options).Failed, Is.True);
     }
 
     [Test]
@@ -45,7 +48,7 @@ public sealed class McpOptionsValidatorTests
         var options = new McpOptions();
         options.Resilience.TotalRequestTimeout = options.ServerTimeout;
 
-        Assert.That(this.validator.Validate(null, options).Failed, Is.True);
+        Assert.That(validator.Validate(name: null, options).Failed, Is.True);
     }
 
     [Test]
@@ -55,6 +58,6 @@ public sealed class McpOptionsValidatorTests
         options.Resilience.AttemptTimeout = TimeSpan.FromMinutes(11);
         options.Resilience.TotalRequestTimeout = TimeSpan.FromMinutes(11);
 
-        Assert.That(this.validator.Validate(null, options).Succeeded, Is.True);
+        Assert.That(validator.Validate(name: null, options).Succeeded, Is.True);
     }
 }

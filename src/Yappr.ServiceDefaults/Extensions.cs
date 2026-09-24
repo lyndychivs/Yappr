@@ -32,8 +32,6 @@ public static class Extensions
 
         builder.Services.AddServiceDiscovery();
 
-        // Resilience is intentionally not applied globally: timeouts differ per client (LLM calls take minutes),
-        // so each client registers its own handler.
         builder.Services.ConfigureHttpClientDefaults(http => http.AddServiceDiscovery());
 
         return builder;

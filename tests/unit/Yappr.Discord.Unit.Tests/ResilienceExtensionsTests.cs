@@ -20,8 +20,11 @@ public sealed class ResilienceExtensionsTests
         HttpStandardResilienceOptions applied = Apply(new McpOptions().Resilience);
 
         TimeSpan expected = McpResilienceOptions.ServerTimeout + McpResilienceOptions.ClientMargin;
-        Assert.That(applied.AttemptTimeout.Timeout, Is.EqualTo(expected));
-        Assert.That(applied.TotalRequestTimeout.Timeout, Is.EqualTo(expected));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(applied.AttemptTimeout.Timeout, Is.EqualTo(expected));
+            Assert.That(applied.TotalRequestTimeout.Timeout, Is.EqualTo(expected));
+        }
     }
 
     [Test]
@@ -50,8 +53,8 @@ public sealed class ResilienceExtensionsTests
 
     /// <summary>
     /// Applies <paramref name="resilience"/> and captures the resulting options by chaining a second
-    /// <c>Configure</c> on the same builder, so the test does not depend on the handler's options name. Creating
-    /// the client also runs the standard handler's option validation.
+    /// <c>Configure</c> on the same builder, so the test does not depend on the handler's options name.
+    /// Creating the client also runs the standard handler's option validation.
     /// </summary>
     private static HttpStandardResilienceOptions Apply(McpResilienceOptions resilience)
     {
