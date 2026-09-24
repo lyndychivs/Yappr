@@ -5,8 +5,7 @@ using System.ComponentModel;
 using ModelContextProtocol.Server;
 
 /// <summary>
-/// Deterministic stand-in for a "chatgpt" MCP tool, used to exercise <c>McpClientToolInvoker</c> without an
-/// external LLM.
+/// Deterministic stand-in for a "chatgpt" MCP tool, used to exercise <c>McpClientToolInvoker</c> without an external LLM.
 /// </summary>
 [McpServerToolType]
 public sealed class EchoTools

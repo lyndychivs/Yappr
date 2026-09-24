@@ -50,8 +50,8 @@ public sealed class ResilienceExtensionsTests
 
     /// <summary>
     /// Applies <paramref name="resilience"/> and captures the resulting options by chaining a second
-    /// <c>Configure</c> on the same builder, so the test does not depend on the handler's options name. Creating
-    /// the client also runs the standard handler's option validation.
+    /// <c>Configure</c> on the same builder, so the test does not depend on the handler's options name.
+    /// Creating the client also runs the standard handler's option validation.
     /// </summary>
     private static HttpStandardResilienceOptions Apply(McpResilienceOptions resilience)
     {

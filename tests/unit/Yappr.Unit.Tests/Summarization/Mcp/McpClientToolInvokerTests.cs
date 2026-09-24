@@ -72,7 +72,6 @@ public sealed class McpClientToolInvokerTests
         IClientTransport transport = invoker.CreateTransport();
         await ((HttpClientTransport)transport).DisposeAsync();
 
-        // ownsHttpClient: true means disposing the transport must dispose the HttpClient it was given.
         Assert.That(
             () => httpClientFactory.LastCreatedClient!.Timeout = TimeSpan.FromSeconds(5),
             Throws.InstanceOf<ObjectDisposedException>());

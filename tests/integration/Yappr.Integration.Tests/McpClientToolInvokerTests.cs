@@ -13,8 +13,7 @@ using Yappr.Models;
 using Yappr.Summarization.Mcp;
 
 /// <summary>
-/// Exercises <see cref="McpClientToolInvoker"/> against a real MCP server (<c>Yappr.McpTestServer</c>) over
-/// stdio.
+/// Exercises <see cref="McpClientToolInvoker"/> against a real MCP server (<c>Yappr.McpTestServer</c>) over stdio.
 /// </summary>
 [TestFixture]
 public sealed class McpClientToolInvokerTests
