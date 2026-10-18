@@ -23,9 +23,12 @@ internal static class TldrWindowResolver
     {
         ArgumentNullException.ThrowIfNull(limits);
 
-        return value <= 0
-            ? TldrWindowResolution.Invalid("The value must be greater than zero.")
-            : kind switch
+        if (value <= 0)
+        {
+            return TldrWindowResolution.Invalid("The value must be greater than zero.");
+        }
+
+        return kind switch
         {
             TldrWindowKind.Days => value > limits.MaxDays
                 ? TldrWindowResolution.Invalid(string.Create(CultureInfo.InvariantCulture, $"`days` can be at most {limits.MaxDays}."))
