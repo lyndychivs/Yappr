@@ -40,7 +40,7 @@ public sealed class McpClientToolInvokerTests
     }
 
     [Test]
-    public void InvokeAsync_ToolReturnsNoTextContent_Throws()
+    public async Task InvokeAsync_ToolReturnsNoTextContent_Throws()
     {
         string serverDllPath = Assembly.Load("Yappr.McpTestServer").Location;
 
@@ -54,7 +54,7 @@ public sealed class McpClientToolInvokerTests
 
         var invoker = new McpClientToolInvoker(new StubHttpClientFactory(), options);
 
-        InvalidOperationException? exception = Assert.ThrowsAsync<InvalidOperationException>(
+        InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => invoker.InvokeAsync("hello from the integration test", CancellationToken.None));
 
         Assert.That(exception!.Message, Is.EqualTo("The MCP tool 'silent' did not return any text content."));

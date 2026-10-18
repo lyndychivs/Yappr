@@ -29,9 +29,9 @@ public sealed class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddMcpHttpClient_ConfiguredTimeout_CancelsHungRequest()
+    public async Task AddMcpHttpClient_ConfiguredTimeout_CancelsHungRequest()
     {
-        using ServiceProvider provider = BuildProvider(new Dictionary<string, string?>(StringComparer.Ordinal)
+        await using ServiceProvider provider = BuildProvider(new Dictionary<string, string?>(StringComparer.Ordinal)
         {
             ["Mcp:Resilience:AttemptTimeout"] = "00:00:01",
             ["Mcp:Resilience:TotalRequestTimeout"] = "00:00:01",
@@ -39,7 +39,7 @@ public sealed class ServiceCollectionExtensionsTests
         HttpClient client = provider.GetRequiredService<IHttpClientFactory>().CreateClient(McpClientToolInvoker.HttpClientName);
 
         var stopwatch = Stopwatch.StartNew();
-        Exception? thrown = Assert.CatchAsync(async () => await client.GetAsync(new Uri("http://localhost/")));
+        Exception? thrown = await Assert.CatchAsync(async () => await client.GetAsync(new Uri("http://localhost/")));
         stopwatch.Stop();
 
         using (Assert.EnterMultipleScope())
