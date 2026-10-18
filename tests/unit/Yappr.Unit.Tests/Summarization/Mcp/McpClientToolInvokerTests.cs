@@ -157,7 +157,7 @@ public sealed class McpClientToolInvokerTests
     }
 
     [Test]
-    public void InvokeAsync_CallToolReturnsNoTextContent_Throws()
+    public async Task InvokeAsync_CallToolReturnsNoTextContent_Throws()
     {
         var invoker = new McpClientToolInvoker(
             new StubHttpClientFactory(),
@@ -169,7 +169,7 @@ public sealed class McpClientToolInvokerTests
             }),
             (_, _, _, _) => Task.FromResult(new CallToolResult { Content = [] }));
 
-        InvalidOperationException? exception = Assert.ThrowsAsync<InvalidOperationException>(
+        InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(
             () => invoker.InvokeAsync("hello", CancellationToken.None));
 
         Assert.That(exception!.Message, Is.EqualTo("The MCP tool 'silent' did not return any text content."));

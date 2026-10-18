@@ -33,9 +33,9 @@ public sealed class ServiceCollectionExtensionsTests
     }
 
     [Test]
-    public void AddOllamaHttpClient_ConfiguredTimeout_CancelsHungRequest()
+    public async Task AddOllamaHttpClient_ConfiguredTimeout_CancelsHungRequest()
     {
-        using ServiceProvider provider = BuildProvider(new Dictionary<string, string?>(StringComparer.Ordinal)
+        await using ServiceProvider provider = BuildProvider(new Dictionary<string, string?>(StringComparer.Ordinal)
         {
             ["Ollama:Resilience:AttemptTimeout"] = "00:00:01",
             ["Ollama:Resilience:TotalRequestTimeout"] = "00:00:01",
@@ -43,7 +43,7 @@ public sealed class ServiceCollectionExtensionsTests
         HttpClient client = provider.GetRequiredService<IHttpClientFactory>().CreateClient(ClientName);
 
         var stopwatch = Stopwatch.StartNew();
-        Exception? thrown = Assert.CatchAsync(async () => await client.GetAsync(new Uri("http://localhost/")));
+        Exception? thrown = await Assert.CatchAsync(async () => await client.GetAsync(new Uri("http://localhost/")));
         stopwatch.Stop();
 
         using (Assert.EnterMultipleScope())

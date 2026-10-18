@@ -49,7 +49,7 @@ public sealed class OllamaChatToolTests
     }
 
     [Test]
-    public void Chat_NonSuccessStatusCode_ThrowsWithResponseBody()
+    public async Task Chat_NonSuccessStatusCode_ThrowsWithResponseBody()
     {
         var handler = new StubHttpMessageHandler(_ => Task.FromResult(new HttpResponseMessage(HttpStatusCode.InternalServerError)
         {
@@ -58,13 +58,13 @@ public sealed class OllamaChatToolTests
 
         OllamaChatTool tool = CreateTool(handler, model: "llama3.1:8b", endpoint: "http://ollama:11434");
 
-        InvalidOperationException exception = Assert.ThrowsAsync<InvalidOperationException>(() => tool.Chat("prompt", CancellationToken.None))!;
+        InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(() => tool.Chat("prompt", CancellationToken.None));
 
-        Assert.That(exception.Message, Does.Contain("model 'llama3.1:8b' not found, try pulling it first"));
+        Assert.That(exception!.Message, Does.Contain("model 'llama3.1:8b' not found, try pulling it first"));
     }
 
     [Test]
-    public void Chat_ResponseMissingTextField_Throws()
+    public async Task Chat_ResponseMissingTextField_Throws()
     {
         var handler = new StubHttpMessageHandler(_ => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
         {
@@ -73,9 +73,9 @@ public sealed class OllamaChatToolTests
 
         OllamaChatTool tool = CreateTool(handler, model: "llama3.1:8b", endpoint: "http://ollama:11434");
 
-        InvalidOperationException exception = Assert.ThrowsAsync<InvalidOperationException>(() => tool.Chat("prompt", CancellationToken.None))!;
+        InvalidOperationException? exception = await Assert.ThrowsAsync<InvalidOperationException>(() => tool.Chat("prompt", CancellationToken.None));
 
-        Assert.That(exception.Message, Is.EqualTo("Ollama did not return a response."));
+        Assert.That(exception!.Message, Is.EqualTo("Ollama did not return a response."));
     }
 
     [Test]
