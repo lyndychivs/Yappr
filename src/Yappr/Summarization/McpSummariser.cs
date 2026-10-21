@@ -29,7 +29,10 @@ public sealed class McpSummariser : ISummariser
     /// <inheritdoc/>
     public async Task<SummaryResult> SummariseAsync(IReadOnlyList<ChannelMessage> messages, CancellationToken cancellationToken)
     {
-        ArgumentNullException.ThrowIfNull(messages);
+        if (messages is null)
+        {
+            throw new ArgumentNullException(nameof(messages), "Messages must be provided to summarise.");
+        }
 
         string prompt = TldrPromptBuilder.Build(messages);
         string summary = await _toolInvoker.InvokeAsync(prompt, cancellationToken);
