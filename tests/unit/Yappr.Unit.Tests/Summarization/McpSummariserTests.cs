@@ -76,6 +76,8 @@ public sealed class McpSummariserTests
 
         Assert.That(
             async () => await summariser.SummariseAsync(null!, CancellationToken.None),
-            Throws.ArgumentNullException.With.Property(nameof(ArgumentException.ParamName)).EqualTo("messages"));
+            Throws.ArgumentNullException
+                .With.Property(nameof(ArgumentException.ParamName)).EqualTo("messages")
+                .And.Message.Contains("Messages must be provided to summarise."));
     }
 }
